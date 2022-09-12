@@ -22,8 +22,6 @@ parser.add_argument('test_file')
 parser.set_defaults(log_level='debug')
 args = parser.parse_args()
 
-os.environ['TEST_QUEUE_JOB_NO_DELAY'] = '1'
-
 if not args.not_interactive:
     os.environ["PYTHONBREAKPOINT"] = "pudb.set_trace"
 else:
