@@ -13,16 +13,16 @@ services:
         chown 999:999 /opt/hostrundir/postgres.socket -R
         chown 999:999 /opt/hostrundir/postgres.logs -R
         echo Successfully setup ownership of socketfile
-
   postgres:
     build: $ODOO_IMAGES/postgres
     restart: unless-stopped
     stdin_open: true
     command: ["postgres"]
     entrypoint: ["/run.sh"]
+    # entrypoint: ["/bin/sh", "-c"]
 
-    depends_on:
-      - postgres_change_permissions
+    # depends_on:
+    #   - postgres_change_permissions
     volumes:
       - $DUMPS_PATH:/opt/dumps
       # volume mount safe (if odoo is mounted into virtual box)
@@ -31,17 +31,19 @@ services:
       - $HOST_RUN_DIR/pgcli_history:/root/.config/pgcli/history
       - odoo_postgres_volume:/var/lib/postgresql/data
       # /.s.PGSQL.5432
-      - $HOST_RUN_DIR/postgres.socket:/var/run/postgresql
       - $HOST_RUN_DIR/postgres.logs:/logs
+      - $HOST_RUN_DIR/postgres.run:/var/run/postgresql.socket
+
     environment:
       POSTGRES_PASSWORD: nobody_knows_what_it_is_like_to_be_the_db_admin
       PGDATA: /var/lib/postgresql/data/pgdata
       PGCLIRC: /var/lib/postgresql/.pgcli.config
+      POSTGRES_SOCKET: /var/run/postgresql.socket/.s.PGSQL.5432
 
     shm_size: ${POSTGRES_SHM_SIZE}
 
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $DB_USER"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+    # healthcheck:
+    #   test: ["CMD-SHELL", "pg_isready -U $DB_USER"]
+    #   interval: 5s
+    #   timeout: 5s
+    #   retries: 5
