@@ -159,3 +159,6 @@ python3 -mpipx ensurepath && \
 pipx install wodoo && \
 echo 'export PATH=$PATH:/root/.local/bin' >> /root/.bashrc
 
+
+RUN apt update && apt install -y libodbc1 unixodbc-dev unixodbc
+RUN pip3 install requests-oauth2client
