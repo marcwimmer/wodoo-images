@@ -20,7 +20,7 @@ RUN apt update \
 
 RUN git clone https://github.com/mozilla/geckodriver.git && cd geckodriver \
 	&& git checkout v$GECKODRIVER_VERSION \
-	&& apt-get autoremove && apt-get clean \
+	&& apt-get autoremove -y && apt-get clean -y \
 	&& rm -rf /var/lib/apt/lists/* /var/cache/apt/*
 
 WORKDIR /opt/geckodriver
