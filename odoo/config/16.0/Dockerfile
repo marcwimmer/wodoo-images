@@ -79,7 +79,10 @@ RUN apt update && apt install -y \
     libpoppler-cpp-dev \
     pkg-config \
     libfreetype6-dev \
-    cmake # parallel-ssh e.g. \
+    freetds-dev  \
+    libffi-dev \
+    libkrb5-dev \
+    cmake \
     git
 
 # install python from compiled binaries
