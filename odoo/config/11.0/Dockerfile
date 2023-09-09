@@ -142,9 +142,12 @@ RUN pip3 install 'setuptools<58.0'
 RUN pip3 install psycopg2 pyinotify python-magic wand pycups pudb numpy
 RUN pip3 install -r /root/odoo_requirements.txt 
 RUN pip3 install -r /root/requirements.txt
+RUN pip3 install cython==0.29.35
+RUN pip3 install gevent==1.5.0 --no-build-isolation
+RUN pip3 install greenlet==0.4.14 --no-build-isolation
 #p3p3p3p3p3p3p3p3p3p3p3p3p3p3p3p3p3p3p3p3p3p3p3p3p3p3p3p3
 
-RUN echo "deb http://ftp.de.debian.org/debian buster main " >> /etc/apt/sources.list.d/dmtx && apt update && apt install -y libdmtx0b
+RUN echo "deb http:e/ftp.de.debian.org/debian buster main " >> /etc/apt/sources.list.d/dmtx && apt update && apt install -y libdmtx0b
 # https://github.com/openvenues/pypostal postal lib for address checking
 ADD install_libpostal.sh /root/install_libpostal.sh
 RUN if [ "$TARGETARCH" = "amd64" ] && [ "$ODOO_INSTALL_LIBPOSTAL" == "1" ]; then bash /root/install_libpostal.sh; fi

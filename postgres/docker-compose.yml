@@ -1,18 +1,33 @@
 # manage-order: 500
 volumes:
-    odoo_postgres_volume:
+  odoo_postgres_volume:
 services:
   postgres_change_permissions:
     image: ubuntu:22.04
     volumes:
       - $HOST_RUN_DIR:/opt/hostrundir
-    entrypoint: ["/bin/sh","-c"]
+    entrypoint: ["/bin/sh", "-c"]
     command:
       - |
         mkdir -p /opt/hostrundir/postgres.socket
         chown 999:999 /opt/hostrundir/postgres.socket -R
         chown 999:999 /opt/hostrundir/postgres.logs -R
         echo Successfully setup ownership of socketfile
+
+  pgbouncer:
+    # https://portcities.net/blog/tech-blog-6/calibrating-pgbouncer-with-odoo-77
+    image: bitnami/pgbouncer:latest
+    environment:
+      - PGBOUNCER_DATABASE=*
+      - POSTGRESQL_USERNAME=${DB_USER}
+      - POSTGRESQL_PASSWORD=${DB_PWD}
+      - PGBOUNCER_POOL_MODE=transaction
+      - PGBOUNCER_PORT=5432
+      - POSTGRESQL_HOST=postgres
+    # volumes:
+    #   - ${ODOO_IMAGES}/postgres/pgbouncer.ini:/etc/pgbouncer/pgbouncer.ini
+    depends_on:
+      - postgres
 
   postgres:
     build: $ODOO_IMAGES/postgres

@@ -77,3 +77,9 @@ def after_settings(config):
 
     if config["LOCAL_SETTINGS"] == "1":
         config["ODOO_FILES"] = str(Path(config["HOST_RUN_DIR"]) / "files")
+
+
+    if config.get("USE_PGBOUNCER") == "1":
+        config['DB_HOST_ODOOCONFIG'] = "pgbouncer"
+    else:
+        config['DB_HOST_ODOOCONFIG'] = config['DB_HOST']
