@@ -2,25 +2,14 @@
 import base64
 from copy import deepcopy
 import robot
-import sys
 import shutil
 import os
-import time
-from flask import redirect
 import arrow
 import subprocess
-from flask import jsonify
-from flask import make_response
-from flask import Flask
-from flask import render_template
-from flask import url_for
-from datetime import datetime
-from flask import request
 import json
 from pathlib import Path
 import threading
 import logging
-import tempfile
 import threading
 from tabulate import tabulate
 from robot import rebot
@@ -306,7 +295,6 @@ def fix_output_ownership():
 
 if __name__ == "__main__":
     fix_output_ownership()
-    #archive = sys.stdin.read().rstrip()
     archive = Path("/tmp/archive")
     archive = base64.b64decode(archive.read_bytes())
     data = json.loads(archive)
