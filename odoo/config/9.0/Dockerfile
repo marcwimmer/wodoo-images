@@ -151,13 +151,14 @@ RUN pip install gevent==1.2.2
 RUN pip install psycopg2==2.8.6 pathlib==1.0.1
 
 RUN \
-apt update && apt install -y python3.10-venv && \
-python3 -mpip install pipx && \
-python3 -mpipx ensurepath
+apt update && \
+apt install -y python3.10-venv && \
+python3.10 -mpip install pipx && \
+python3.10 -mpipx ensurepath
 
 RUN \
-PIPX_DEFAULT_PYTHON=/opt/venv/bin/python3 \
+PIPX_DEFAULT_PYTHON=python3.10 \
 PIPX_HOME=/opt/wodoo_env \
 PIPX_BIN_DIR=/usr/local/bin/pipxbin \
-pipx install wodoo && \
+python3.10 -mpipx install wodoo && \
 echo 'export PATH=$PATH:/usr/local/bin/pipxbin' >> /root/.bashrc
