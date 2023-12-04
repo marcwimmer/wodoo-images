@@ -234,7 +234,7 @@ python3 -mpip install pipx && \
 python3 -mpipx ensurepath && \
 mkdir /usr/local/bin/pipxbin && \
 
-PIPX_DEFAULT_PYTHON=/usr/local/bin/python3 \
+PIPX_DEFAULT_PYTHON=/opt/venv/bin/python3 \
 PIPX_HOME=/opt/wodoo_env \
 PIPX_BIN_DIR=/usr/local/bin/pipxbin \
 pipx install wodoo && \
