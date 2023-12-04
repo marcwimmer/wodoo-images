@@ -146,7 +146,7 @@ ENV PYTHONIOENCODING=utf8
 
 RUN pip install pudb ipython docker gitpython
 RUN echo "\nimport sys; sys.setdefaultencoding('utf-8')" >> /etc/python2.7/sitecustomize.py
-RUN python3 -mpip install wodoo
+
 RUN pip install gevent==1.2.2
 RUN pip install psycopg2==2.8.6 pathlib==1.0.1
 
@@ -154,5 +154,10 @@ RUN \
 apt update && apt install -y python3.10-venv && \
 python3 -mpip install pipx && \
 python3 -mpipx ensurepath && \
+
+RUN \
+PIPX_DEFAULT_PYTHON=/opt/venv/bin/python3 \
+PIPX_HOME=/opt/wodoo_env \
+PIPX_BIN_DIR=/usr/local/bin/pipxbin \
 pipx install wodoo && \
-echo 'export PATH=$PATH:/root/.local/bin' >> /root/.bashrc
+echo 'export PATH=$PATH:/usr/local/bin/pipxbin' >> /root/.bashrc
