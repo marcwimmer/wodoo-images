@@ -153,11 +153,14 @@ RUN if [ "$TARGETARCH" = "amd64" ] && [ "$ODOO_INSTALL_LIBPOSTAL" == "1" ]; then
 WORKDIR /opt/odoo
 RUN python3 -mpip install debugpy docker
 RUN mkdir /opt/venv; ln -s /usr/bin /opt/venv/bin
+RUN python3 -mpip install pipx
+RUN python3 -mpipx ensurepath 
 RUN \
-python3 -mpip install pipx && \
-python3 -mpipx ensurepath && \
+PIPX_DEFAULT_PYTHON=/opt/venv/bin/python3 \
+PIPX_HOME=/opt/wodoo_env \
+PIPX_BIN_DIR=/usr/local/bin/pipxbin \
 pipx install wodoo && \
-echo 'export PATH=$PATH:/root/.local/bin' >> /root/.bashrc
+echo 'export PATH=$PATH:/usr/local/bin/pipxbin' >> /root/.bashrc
 
 
 RUN apt update && apt install -y libodbc1 unixodbc-dev unixodbc
