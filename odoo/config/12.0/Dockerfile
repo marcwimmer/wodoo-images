@@ -213,7 +213,7 @@ RUN rm /usr/local/bin/python3 /usr/bin/python3
 RUN echo "$ODOO_DEB_REQUIREMENTS"  | base64 --decode > /root/deb_requirements.txt
 RUN apt update && xargs apt install -y < /root/deb_requirements.txt
 
-RUN python3 -mpip install cython
+# RUN python3 -mpip install cython
 RUN apt update; apt install -y \
 libpq-dev \
 libxml2-dev libxslt1-dev \
@@ -226,12 +226,20 @@ python3 -mpip install gevent && \
 python3 -mpip install greenlet
 COPY config/12.0/requirements.txt requirements.txt
 RUN python3 -mpip install -r requirements.txt
-RUN python3 -mpip install babel ics pdf2image zxcvbn reportlab==3.6.12
+RUN python3 -mpip install babel ics pdf2image zxcvbn reportlab==3.6.12 odoorpc
 
 RUN \
 python3 -mpip install pipx && \
 python3 -mpipx ensurepath && \
-pipx install wodoo && \
 echo 'export PATH=$PATH:/root/.local/bin' >> /root/.bashrc
+
+RUN mkdir -p /root/.local/pipx/venvs && \
+cd /root/.local/pipx/venvs && \
+mkdir wodoo/bin -p && \
+cd wodoo/bin && \
+ln -s /opt/venv/bin/python3 && \
+pipx install wodoo
+
+RUN pipx install wodoo --force
 
 WORKDIR /opt/odoo
