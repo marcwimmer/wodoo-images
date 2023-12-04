@@ -1,4 +1,4 @@
-#!/root/.local/pipx/venvs/wodoo/bin/python3
+#!/root/.local/share/pipx/venvs/wodoo/bin/python3
 from datetime import datetime
 import json
 import os

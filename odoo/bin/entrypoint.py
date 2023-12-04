@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/root/.local/share/pipx/venvs/wodoo/bin/python3
 import sys
 import os
 import shutil
