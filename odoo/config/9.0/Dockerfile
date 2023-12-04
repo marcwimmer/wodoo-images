@@ -124,7 +124,7 @@ RUN pip install lxml psycopg2-binary click pudb psutil
 ADD config/$ODOO_VERSION/requirements.txt /root/requirements.txt
 RUN pip install pathlib2
 RUN pip install -r /root/requirements.txt --no-build-isolation
-RUN pip install python-magic 
+RUN pip install python-magic==0.4.25
 
 # python2 binary error on ubuntu 18.04
 # https://github.com/psycopg/psycopg2-wheels/issues/2
@@ -146,13 +146,19 @@ ENV PYTHONIOENCODING=utf8
 
 RUN pip install pudb ipython docker gitpython
 RUN echo "\nimport sys; sys.setdefaultencoding('utf-8')" >> /etc/python2.7/sitecustomize.py
-RUN python3 -mpip install wodoo
+
 RUN pip install gevent==1.2.2
 RUN pip install psycopg2==2.8.6 pathlib==1.0.1
 
 RUN \
-apt update && apt install -y python3.10-venv && \
-python3 -mpip install pipx && \
-python3 -mpipx ensurepath && \
-pipx install wodoo && \
-echo 'export PATH=$PATH:/root/.local/bin' >> /root/.bashrc
+apt update && \
+apt install -y python3.10-venv && \
+python3.10 -mpip install pipx && \
+python3.10 -mpipx ensurepath
+
+RUN \
+PIPX_DEFAULT_PYTHON=python3.10 \
+PIPX_HOME=/opt/wodoo_env \
+PIPX_BIN_DIR=/usr/local/bin/pipxbin \
+python3.10 -mpipx install wodoo && \
+echo 'export PATH=$PATH:/usr/local/bin/pipxbin' >> /root/.bashrc
