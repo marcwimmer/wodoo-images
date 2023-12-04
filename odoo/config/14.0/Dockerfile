@@ -251,7 +251,7 @@ RUN apt update && xargs apt install -y < /root/deb_requirements.txt
 
 
 WORKDIR /usr/local/bin
-RUN ln -s /opt/venv/bin/python3
+RUN ln /opt/venv/bin/python3
 
 WORKDIR /opt/odoo
 
@@ -261,8 +261,16 @@ apt update && \
 apt install -y libpq-dev && \
 python3 -mpip install psycopg2-binary --no-binary psycopg2-binary --force-reinstall; \
 fi
+
+# install wodoo
 RUN \
 python3 -mpip install pipx && \
 python3 -mpipx ensurepath && \
+mkdir /usr/local/bin/pipx && \
+
+PIPX_DEFAULT_PYTHON=/usr/local/bin/python3 \
+PIPX_HOME=/opt/wodoo_env \
+PIPX_BIN_DIR=/usr/local/bin/pipx \
 pipx install wodoo && \
-echo 'export PATH=$PATH:/root/.local/bin' >> /root/.bashrc
+
+echo 'export PATH=$PATH:/usr/local/bin/pipx' >> /root/.bashrc

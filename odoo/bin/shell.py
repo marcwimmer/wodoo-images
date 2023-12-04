@@ -1,4 +1,4 @@
-#!/root/.local/share/pipx/venvs/wodoo/bin/python3
+#!/usr/bin/env wodoo_python
 from pathlib import Path
 import tempfile
 import os

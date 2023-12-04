@@ -1,4 +1,4 @@
-#!/root/.local/share/pipx/venvs/wodoo/bin/python3
+#!/usr/bin/env wodoo_python
 # Runs a migration script either SQL or PY
 import re
 import subprocess

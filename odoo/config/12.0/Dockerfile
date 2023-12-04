@@ -228,18 +228,17 @@ COPY config/12.0/requirements.txt requirements.txt
 RUN python3 -mpip install -r requirements.txt
 RUN python3 -mpip install babel ics pdf2image zxcvbn reportlab==3.6.12 odoorpc
 
+# install wodoo
 RUN \
 python3 -mpip install pipx && \
 python3 -mpipx ensurepath && \
-echo 'export PATH=$PATH:/root/.local/bin' >> /root/.bashrc
+mkdir /usr/local/bin/pipx && \
 
-RUN mkdir -p /root/.local/pipx/venvs && \
-cd /root/.local/pipx/venvs && \
-mkdir wodoo/bin -p && \
-cd wodoo/bin && \
-ln -s /opt/venv/bin/python3 && \
-pipx install wodoo
+PIPX_DEFAULT_PYTHON=/usr/local/bin/python3 \
+PIPX_HOME=/opt/wodoo_env \
+PIPX_BIN_DIR=/usr/local/bin/pipx \
+pipx install wodoo && \
 
-RUN pipx install wodoo --force
+echo 'export PATH=$PATH:/usr/local/bin/pipx' >> /root/.bashrc
 
 WORKDIR /opt/odoo

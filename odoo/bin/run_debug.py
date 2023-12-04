@@ -1,4 +1,4 @@
-#!/root/.local/share/pipx/venvs/wodoo/bin/python3
+#!/usr/bin/env wodoo_python
 import os
 from pathlib import Path
 from tools import exec_odoo

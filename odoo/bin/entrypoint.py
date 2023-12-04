@@ -1,4 +1,4 @@
-#!/root/.local/share/pipx/venvs/wodoo/bin/python3
+#!/usr/local/bin/wodoo_python
 import sys
 import os
 import shutil
