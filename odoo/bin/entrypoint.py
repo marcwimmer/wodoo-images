@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/local/bin/wodoo_python
 import sys
 import os
 import shutil
