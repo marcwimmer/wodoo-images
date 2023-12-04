@@ -124,7 +124,7 @@ RUN pip install lxml psycopg2-binary click pudb psutil
 ADD config/$ODOO_VERSION/requirements.txt /root/requirements.txt
 RUN pip install pathlib2
 RUN pip install -r /root/requirements.txt --no-build-isolation
-RUN pip install python-magic 
+RUN pip install python-magic==0.4.25
 
 # python2 binary error on ubuntu 18.04
 # https://github.com/psycopg/psycopg2-wheels/issues/2
@@ -153,7 +153,7 @@ RUN pip install psycopg2==2.8.6 pathlib==1.0.1
 RUN \
 apt update && apt install -y python3.10-venv && \
 python3 -mpip install pipx && \
-python3 -mpipx ensurepath && \
+python3 -mpipx ensurepath
 
 RUN \
 PIPX_DEFAULT_PYTHON=/opt/venv/bin/python3 \
