@@ -240,5 +240,6 @@ PIPX_BIN_DIR=/usr/local/bin/pipxbin \
 pipx install wodoo && \
 
 echo 'export PATH=$PATH:/usr/local/bin/pipxbin' >> /root/.bashrc
+RUN pip install pillow==6.1.0
 
 WORKDIR /opt/odoo
