@@ -241,5 +241,11 @@ pipx install wodoo && \
 
 echo 'export PATH=$PATH:/usr/local/bin/pipxbin' >> /root/.bashrc
 RUN pip install pillow==6.1.0
+RUN pip install cachetools==2.0.1
+RUN pip install dicttoxml==1.7.4
+RUN pip install openpyxl==2.6.4
+RUN pip install xmltodict==0.12.0
+RUN pip install zeep==3.4.0
+RUN pip install sentry-sdk==0.19.5
 
 WORKDIR /opt/odoo
