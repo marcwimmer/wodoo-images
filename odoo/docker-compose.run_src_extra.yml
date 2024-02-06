@@ -1,0 +1,5 @@
+# manage-order 1001
+services:
+  odoo_base:
+    volumes:
+      - ${CUSTOMS_DIR}:/opt/src
