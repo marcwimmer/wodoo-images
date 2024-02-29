@@ -238,8 +238,8 @@ PIPX_DEFAULT_PYTHON=/opt/venv/bin/python3 \
 PIPX_HOME=/opt/wodoo_env \
 PIPX_BIN_DIR=/usr/local/bin/pipxbin \
 pipx install wodoo && \
-
 echo 'export PATH=$PATH:/usr/local/bin/pipxbin' >> /root/.bashrc
+
 RUN pip install pillow==6.1.0
 RUN pip install cachetools==2.0.1
 RUN pip install dicttoxml==1.7.4

@@ -238,5 +238,4 @@ PIPX_DEFAULT_PYTHON=/opt/venv/bin/python3 \
 PIPX_HOME=/opt/wodoo_env \
 PIPX_BIN_DIR=/usr/local/bin/pipxbin \
 pipx install wodoo && \
-
 echo 'export PATH=$PATH:/usr/local/bin/pipxbin' >> /root/.bashrc
