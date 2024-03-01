@@ -24,6 +24,40 @@ is_odoo_cronjob = os.getenv("IS_ODOO_CRONJOB", "0") == "1"
 is_odoo_queuejob = os.getenv("IS_ODOO_QUEUEJOB", "0") == "1"
 
 
+def _get_queuejob_channels():
+    settingsfile = Path("/opt/run") / Path(os.environ['QUEUEJOB_CHANNELS_FILE']).name
+    if settingsfile.exists():
+        channels = ",".join(settingsfile.read_text().strip().splitlines())
+    else:
+        channels = os.getenv("ODOO_QUEUEJOBS_CHANNELS")
+
+        # replace any env variable
+    channels = [
+        (x, int(y))
+        for x, y in list(
+            map(
+                lambda x: x.strip().split(":"),
+                [X for X in channels.split(",")],
+            )
+        )
+    ]
+    channels_no_root = [x for x in channels if x[0] != "root"]
+    if channels_no_root:
+        Sum = sum(x[1] for x in channels_no_root)
+    elif channels:
+        Sum = sum(x[1] for x in channels)
+    else:
+        raise Exception("Please define at least on root channel for odoo queue jobs.")
+
+    channels = ",".join(f"{x[0]}:{x[1]}" for x in [("root", Sum)] + channels_no_root)
+
+    # Why * 2; doesnt work with just * 1 - dont understand why right now;
+    # Queuejobs did not start at all
+    if not config.get("ODOO_QUEUEJOBS_WORKERS"):
+        config["ODOO_QUEUEJOBS_WORKERS"] = str(int(Sum * 2))  # good for all in one also
+    return channels
+
+
 def _replace_params_in_config(ADDONS_PATHS, content, server_wide_modules=None):
     if not config.get("DB_HOST", "") or not config.get("DB_USER", ""):
         raise Exception("Please define all DB Env Variables!")
@@ -47,6 +81,9 @@ def _replace_params_in_config(ADDONS_PATHS, content, server_wide_modules=None):
 
     server_wide_modules = ",".join(_get_server_wide_modules(server_wide_modules))
     content = content.replace("__SERVER_WIDE_MODULES__", server_wide_modules)
+
+    # queuejob channels
+    content = content.replace("__ODOO_QUEUEJOBS_CHANNELS__", _get_queuejob_channels())
 
     for key, value in os.environ.items():
         key = f"__{key}__"
