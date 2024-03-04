@@ -25,9 +25,14 @@ is_odoo_queuejob = os.getenv("IS_ODOO_QUEUEJOB", "0") == "1"
 
 
 def _get_queuejob_channels():
-    settingsfile = Path("/opt/run") / Path(os.environ['QUEUEJOB_CHANNELS_FILE']).name
-    if settingsfile.exists():
-        channels = ",".join(settingsfile.read_text().strip().splitlines())
+    if os.getenv("QUEUEJOB_CHANNELS_FILE"):
+        settingsfile = (
+            Path("/opt/run") / Path(os.environ["QUEUEJOB_CHANNELS_FILE"]).name
+        )
+        if settingsfile.exists():
+            channels = ",".join(settingsfile.read_text().strip().splitlines())
+        else:
+            channels = os.getenv("ODOO_QUEUEJOBS_CHANNELS")
     else:
         channels = os.getenv("ODOO_QUEUEJOBS_CHANNELS")
 
