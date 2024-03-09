@@ -144,7 +144,6 @@ RUN apt update
 RUN apt-get install \
 	-y \
 	--no-install-recommends \
-			man \
             htop \
             ca-certificates \
             curl \
@@ -156,14 +155,11 @@ RUN apt-get install \
             libjpeg-dev \
             automake \
             pkg-config \
-            libpcre3-dev \
             liblzma-dev \
             make \
             ssh \
-            mc \
             libfontconfig \
             rsync \
-            psmisc \
             lsof \
             git \
             sudo \
@@ -171,35 +167,14 @@ RUN apt-get install \
             freetds-dev \
             wget \
             cifs-utils \
-            imagemagick \
             cups \
-            libreoffice \
             locales \
-			libmagickwand-dev \
-            ffmpeg \
             zip \
             gpg-agent \
             pdftk \
             python3-gi \
-            python3-click \
-            python3-gi-cairo \
-            python3-cairo \
-            gir1.2-gtk-3.0 \
-            libmagickwand-dev \
-            libmagic-dev \
-            libcups2-dev \
-            locales-all \
-            libpoppler-cpp-dev \
-            postgresql-client \
-            sassc \
-            time \
-            xfonts-75dpi \
-            xfonts-base \
-            libgeos-dev
+            python3-click 
 
-ADD liberation-sans /usr/share/fonts/
-# rebuild font cache
-RUN fc-cache -f -v
 
 WORKDIR /tmp
 
@@ -277,7 +252,6 @@ RUN \
 python3 -mpip install pipx && \
 python3 -mpipx ensurepath && \
 mkdir /usr/local/bin/pipxbin && \
-
 PIPX_DEFAULT_PYTHON=/usr/local/bin/python3 \
 PIPX_HOME=/opt/wodoo_env \
 PIPX_BIN_DIR=/usr/local/bin/pipxbin \
