@@ -173,7 +173,10 @@ RUN apt-get install \
             gpg-agent \
             pdftk \
             python3-gi \
-            python3-click 
+            python3-click \
+            locales
+
+RUN locale-gen en_US.UTF-8 && dpkg-reconfigure locales
 
 
 WORKDIR /tmp
