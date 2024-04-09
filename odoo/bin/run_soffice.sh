@@ -5,6 +5,7 @@ fi
 while true;
 do
 	pkill -9 -f soffice.bin.*socket.*port=2002 || break
+    sleep 2
 done
 
 while true;
@@ -15,5 +16,5 @@ do
         disown $PID
         kill -0 $PID 2>/dev/null && break
     fi
-    sleep 1
+    sleep 2
 done
