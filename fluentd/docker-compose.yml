@@ -11,9 +11,9 @@ services:
     volumes:
       - $ODOO_IMAGES/fluentd/fluentd/conf:/fluentd/etc
       - $ODOO_IMAGES/fluentd/fluentd-configs:/fluentd-configs
-    # ports:
-    #   - "10.250.0.5:24224:24224"
-    #   - "10.250.0.5:24224:24224/udp"
+    ports:
+      - "10.211.55.114:24224:24224"
+      - "10.211.55.114:24224:24224/udp"
     depends_on:
       - fluentd_postgres
     logging:
@@ -22,6 +22,7 @@ services:
         max-size: "10m"
         max-file: "10"
         compress: "true"
+  
 
   # fluentd_cronjobs:
   #   build: ./cronjobs
