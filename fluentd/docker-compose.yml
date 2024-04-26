@@ -1,0 +1,56 @@
+version: "3"
+volumes:
+  fluentd_postgres:
+    external: false
+
+services:
+  fluentd:
+    build: ./fluentd
+    restart: unless-stopped
+    volumes:
+      - ./fluentd/conf:/fluentd/etc
+      - ./fluentd-configs:/fluentd-configs
+    ports:
+      - "10.250.0.5:24224:24224"
+      - "10.250.0.5:24224:24224/udp"
+    depends_on:
+      - fluentd_postgres
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "10"
+        compress: "true"
+
+  # fluentd_cronjobs:
+  #   build: ./cronjobs
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - fluentd_postgres
+  #   environment:
+  #     - POSTGRES_USER=fluentd
+  #     - POSTGRES_PASSWORD=fluentd
+  #     - POSTGRES_DB=fluentd
+  #     - POSTGRES_HOST=fluentd_postgres
+  #     - POSTGRES_PORT=5432
+  #   volumes:
+  #     - ./cronjobs/cronjobs:/cronjobs
+
+  fluentd_postgres:
+    image: postgres:16.1
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=fluentd
+      - POSTGRES_PASSWORD=fluentd
+      - POSTGRES_DB=fluentd
+    volumes:
+      - fluentd_postgres:/var/lib/postgresql/data
+      - ./init_sql:/docker-entrypoint-initdb.d
+    ports:
+      - "9432:5432"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "10"
+        compress: "true"

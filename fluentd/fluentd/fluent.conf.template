@@ -1,0 +1,45 @@
+# fluentd/conf/fluent.conf
+
+<source>
+  @type forward
+  port 24224
+  bind 0.0.0.0
+</source>
+
+# debug output to syslog
+<filter {{ sink.tagname }}>
+  @type stdout
+</filter>
+
+# parse nginx line into tokens
+<filter "{{ sink.tagname }}">
+  # we assume this is log output from an nginx httpd
+  @type parser
+  {{ sink.parse }}
+</filter>
+
+# debug output to syslog
+<filter {{ sink.tagname }}>
+  @type stdout
+</filter>
+
+# write output to postgres
+<match {{ sink.tagname }}>
+    @type sql
+    host fluentd_postgres
+    port 5432
+    database fluentd
+    adapter postgresql
+    username fluentd
+    password fluentd
+
+    <table>
+      table {{ sink.table }}
+      column_mapping "{{ sink.mapping | trim }}"
+    </table>
+
+    <buffer>
+        @type memory
+        flush_mode immediate
+    </buffer>
+</match>
