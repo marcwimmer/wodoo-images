@@ -1,3 +1,4 @@
+# manage-order 100
 version: "3"
 volumes:
   fluentd_postgres:
@@ -5,14 +6,14 @@ volumes:
 
 services:
   fluentd:
-    build: ./fluentd
+    build: $ODOO_IMAGES/fluentd/fluentd
     restart: unless-stopped
     volumes:
-      - ./fluentd/conf:/fluentd/etc
-      - ./fluentd-configs:/fluentd-configs
-    ports:
-      - "10.250.0.5:24224:24224"
-      - "10.250.0.5:24224:24224/udp"
+      - $ODOO_IMAGES/fluentd/fluentd/conf:/fluentd/etc
+      - $ODOO_IMAGES/fluentd/fluentd-configs:/fluentd-configs
+    # ports:
+    #   - "10.250.0.5:24224:24224"
+    #   - "10.250.0.5:24224:24224/udp"
     depends_on:
       - fluentd_postgres
     logging:
@@ -45,7 +46,7 @@ services:
       - POSTGRES_DB=fluentd
     volumes:
       - fluentd_postgres:/var/lib/postgresql/data
-      - ./init_sql:/docker-entrypoint-initdb.d
+      - $ODOO_IMAGES/fluentd/init_sql:/docker-entrypoint-initdb.d
     ports:
       - "9432:5432"
     logging:
