@@ -24,19 +24,19 @@ services:
         compress: "true"
   
 
-  # fluentd_cronjobs:
-  #   build: ./cronjobs
-  #   restart: unless-stopped
-  #   depends_on:
-  #     - fluentd_postgres
-  #   environment:
-  #     - POSTGRES_USER=fluentd
-  #     - POSTGRES_PASSWORD=fluentd
-  #     - POSTGRES_DB=fluentd
-  #     - POSTGRES_HOST=fluentd_postgres
-  #     - POSTGRES_PORT=5432
-  #   volumes:
-  #     - ./cronjobs/cronjobs:/cronjobs
+  fluentd_cronjobs:
+    build: ./cronjobs
+    restart: unless-stopped
+    depends_on:
+      - fluentd_postgres
+    environment:
+      - POSTGRES_USER=fluentd
+      - POSTGRES_PASSWORD=fluentd
+      - POSTGRES_DB=fluentd
+      - POSTGRES_HOST=fluentd_postgres
+      - POSTGRES_PORT=5432
+    volumes:
+      - ./cronjobs/cronjobs:/cronjobs
 
   fluentd_postgres:
     image: postgres:16.1
