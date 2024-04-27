@@ -19,5 +19,6 @@ RUN ["gem", "install", "pg", "--no-document"]
 RUN pip install fluent-logger
 RUN ["gem", "install", "fluent-plugin-json", "--no-document"]
 RUN ["gem", "install", "fluent-plugin-docker-json", "--no-document"]
+RUN ["gem", "install", "fluent-plugin-multi-format-parser", "--no-document"]
 
 USER fluent
