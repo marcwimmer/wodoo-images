@@ -1,4 +1,5 @@
 # manage-order 1000
+
 services:
   odoo_base:
     depends_on:
@@ -6,5 +7,9 @@ services:
     logging:
       driver: fluentd
       options:
-        fluentd-address: "fluentd:24224"
+        #fluentd-address: 10.211.55.114:24224
+        # fluentd-address: unix:///filepath.sock
+        fluentd-address: fluentd:24224
+        # by this, it waits till the host is up :) yeah
+        fluentd-async: true
         tag: odoo.log

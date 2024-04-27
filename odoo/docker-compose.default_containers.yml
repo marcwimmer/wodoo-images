@@ -27,9 +27,6 @@ services:
         odoo.queuejob_container: '1'
     environment:
       IS_ODOO_CRONJOB: 1
-    logging:
-        options:
-            max-size: 3g
 
   odoo_queuejobs:
     labels:
@@ -37,9 +34,6 @@ services:
         odoo.queuejob_container: '1'
     environment:
       IS_ODOO_QUEUEJOB: 1
-    logging:
-        options:
-            max-size: 3g
 
   odoo_update:
     labels:
