@@ -16,7 +16,9 @@ try:
 
     cur = conn.cursor()
     print("Executing delete command")
-    cur.execute("DELETE FROM httpd_access WHERE timestamp < NOW() - INTERVAL '2 days';")
+    # cur.execute("DELETE FROM console_log WHERE timestamp < NOW() - INTERVAL '2 days';")
+    cur.execute("DELETE FROM console_log WHERE exported = true;")
+    cur.execute("DELETE FROM console_log;")
     cur.close()
 
     conn.commit()

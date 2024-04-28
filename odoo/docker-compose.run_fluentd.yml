@@ -11,5 +11,5 @@ services:
         # fluentd-address: unix:///filepath.sock
         fluentd-address: fluentd:24224
         # by this, it waits till the host is up :) yeah
-        fluentd-async: true
+        fluentd-async: 'true'
         tag: odoo.log

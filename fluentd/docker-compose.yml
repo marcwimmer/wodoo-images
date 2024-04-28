@@ -25,7 +25,7 @@ services:
   
 
   fluentd_cronjobs:
-    build: ./cronjobs
+    build: $ODOO_IMAGES/fluentd/cronjobs
     restart: unless-stopped
     depends_on:
       - fluentd_postgres
@@ -36,7 +36,7 @@ services:
       - POSTGRES_HOST=fluentd_postgres
       - POSTGRES_PORT=5432
     volumes:
-      - ./cronjobs/cronjobs:/cronjobs
+      - $ODOO_IMAGES/fluentd/cronjobs/cronjobs:/cronjobs
 
   fluentd_postgres:
     image: postgres:16.1
