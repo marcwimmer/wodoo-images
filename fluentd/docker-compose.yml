@@ -46,8 +46,6 @@ services:
     volumes:
       - fluentd_postgres:/var/lib/postgresql/data
       - $ODOO_IMAGES/fluentd/init_sql:/docker-entrypoint-initdb.d
-    ports:
-      - "9432:5432"
     logging:
       driver: "json-file"
       options:
