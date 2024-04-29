@@ -11,9 +11,7 @@ services:
     volumes:
       - $ODOO_IMAGES/fluentd/fluentd/conf:/fluentd/etc
       - $ODOO_IMAGES/fluentd/fluentd-configs:/fluentd-configs
-    ports:
-      - "10.211.55.114:24224:24224"
-      - "10.211.55.114:24224:24224/udp"
+      - $HOME/.fluentd.sock.$PROJECT_NAME:/var/run/fluentd.sock
     depends_on:
       - fluentd_postgres
     logging:
