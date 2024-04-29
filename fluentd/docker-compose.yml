@@ -3,6 +3,8 @@ version: "3"
 volumes:
   fluentd_postgres:
     external: false
+  fluentd_socket:
+    external: false
 
 services:
   fluentd:
@@ -25,7 +27,7 @@ services:
   fluentd_socket:
     image: ubuntu:latest
     volumes:
-      - $HOME:/var/run/fluentd.sock
+      - fluentd_socket:/var/run/fluentd.sock
     entrypoint: ["/bin/sh","-c"]
     command: 
       - |

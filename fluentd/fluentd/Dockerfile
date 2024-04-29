@@ -24,5 +24,6 @@ RUN ["gem", "install", "fluent-plugin-docker-json", "--no-document"]
 RUN ["gem", "install", "fluent-plugin-multi-format-parser", "--no-document"]
 RUN ["gem", "install", "fluent-plugin-concat", "--no-document"]
 RUN ["gem", "install", "fluent-plugin-multiline-parser", "--no-document"]
+RUN ["gem", "install", "fluent-plugin-unix-client", "--no-document"]
 
 USER fluent
