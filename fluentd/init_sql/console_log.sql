@@ -4,7 +4,8 @@ create table console_log (
     ttime character varying,
     loglevel character varying,
     line character varying,
-    exported boolean
+    exported boolean,
+    tag character varying
 );
 
 create index console_log_timestamp on console_log(logdate);
