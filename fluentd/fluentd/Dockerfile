@@ -14,11 +14,15 @@ RUN apt install -y python3-pip
 #RUN ["gem", "install", "fluent-plugin-sql", "--no-document", "--version", "5.0.3"]
 #RUN ["gem", "install", "fluent-plugin-nginx", "--no-document"]
 RUN ["gem", "install", "fluent-plugin-sql", "--no-document"]
+RUN ["gem", "install", "fluent-plugin-postgres", "--no-document"]
+RUN ["gem", "install", "fluent-plugin-rewrite-tag-filter", "--no-document"]
 #RUN ["gem", "install", "fluent-plugin-tail", "--no-document"]
 RUN ["gem", "install", "pg", "--no-document"]
 RUN pip install fluent-logger
 RUN ["gem", "install", "fluent-plugin-json", "--no-document"]
 RUN ["gem", "install", "fluent-plugin-docker-json", "--no-document"]
 RUN ["gem", "install", "fluent-plugin-multi-format-parser", "--no-document"]
+RUN ["gem", "install", "fluent-plugin-concat", "--no-document"]
+RUN ["gem", "install", "fluent-plugin-multiline-parser", "--no-document"]
 
 USER fluent
