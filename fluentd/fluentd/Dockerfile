@@ -26,4 +26,9 @@ RUN ["gem", "install", "fluent-plugin-concat", "--no-document"]
 RUN ["gem", "install", "fluent-plugin-multiline-parser", "--no-document"]
 RUN ["gem", "install", "fluent-plugin-unix-client", "--no-document"]
 
+RUN apt install -y sudo
+RUN echo "fluent  ALL=NOPASSWD: chmod a+rwx /var/run/fluentd.sock" >> /etc/sudoers
+RUN sed -i '2 i rm -f /var/run/fluentd.sock/sock || true' /bin/entrypoint.sh
+RUN sed -i '3 i sudo chmod a+rwx /var/run/fluentd.sock -R' /bin/entrypoint.sh
+
 USER fluent
