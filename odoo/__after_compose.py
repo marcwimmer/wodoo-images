@@ -102,6 +102,7 @@ def after_compose(config, settings, yml, globals):
 
     _determine_odoo_configuration(config, yml, PYTHON_VERSION, settings, globals)
 
+    _apply_fluentd_logging(config, yml, settings, globals)
 
 def store_sha_of_external_deps(config, deps):
     v = ""
@@ -338,3 +339,15 @@ def _determine_odoo_configuration(config, yml, PYTHON_VERSION, settings, globals
     for odoo_machine in odoo_machines:
         service = yml["services"][odoo_machine]
         service["environment"]["ADDITIONAL_ODOO_CONFIG"] = config
+
+def _apply_fluentd_logging(config, yml, settings, globals):
+    if not config.run_fluentd:
+        return
+
+    get_services = globals["tools"].get_services
+    odoo_machines = get_services(config, "odoo_base", yml=yml)
+    for odoo_machine in odoo_machines:
+        service = yml["services"][odoo_machine]
+        tag = service['logging']['options']['tag']
+        tag = tag.replace("__SERVICE__", odoo_machine)
+        service['logging']['options']['tag'] = tag
