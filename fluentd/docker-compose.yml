@@ -14,6 +14,7 @@ services:
       - $HOME/.fluentd.sock.$PROJECT_NAME:/var/run/fluentd.sock
     depends_on:
       - fluentd_postgres
+      - fluentd_socket
     logging:
       driver: "json-file"
       options:
@@ -21,6 +22,18 @@ services:
         max-file: "10"
         compress: "true"
   
+  fluentd_socket:
+    image: ubuntu:latest
+    volumes:
+      - $HOME:/var/run/fluentd.sock
+    entrypoint: ["/bin/sh","-c"]
+    command: 
+      - |
+        set -x
+        cd /var/run/fluentd.sock
+        file=.fluentd.sock.$PROJECT_NAME
+        mkdir -p "$$file"
+        chmod a+rwx -R "$$file"
 
   fluentd_cronjobs:
     build: $ODOO_IMAGES/fluentd/cronjobs
