@@ -8,7 +8,7 @@ volumes:
 
 services:
   fluentd:
-    build: $ODOO_IMAGES/fluentd/fluentd
+    build: $ODOO_IMAGES/logcollector/fluentd
     restart: unless-stopped
     volumes:
       - $ODOO_IMAGES/fluentd/fluentd/conf:/fluentd/etc
@@ -24,7 +24,7 @@ services:
         compress: "true"
   
   fluentd_cronjobs:
-    build: $ODOO_IMAGES/fluentd/cronjobs
+    build: $ODOO_IMAGES/logcollector/cronjobs
     restart: unless-stopped
     depends_on:
       - fluentd_postgres
@@ -35,7 +35,7 @@ services:
       - POSTGRES_HOST=fluentd_postgres
       - POSTGRES_PORT=5432
     volumes:
-      - $ODOO_IMAGES/fluentd/cronjobs/cronjobs:/cronjobs
+      - $ODOO_IMAGES/logcollector/cronjobs/cronjobs:/cronjobs
 
   fluentd_postgres:
     image: postgres:16.1
@@ -46,7 +46,7 @@ services:
       - POSTGRES_DB=fluentd
     volumes:
       - fluentd_postgres:/var/lib/postgresql/data
-      - $ODOO_IMAGES/fluentd/init_sql:/docker-entrypoint-initdb.d
+      - $ODOO_IMAGES/logcollector/init_sql:/docker-entrypoint-initdb.d
     logging:
       driver: "json-file"
       options:
