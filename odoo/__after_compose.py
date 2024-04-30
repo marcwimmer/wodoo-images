@@ -341,7 +341,7 @@ def _determine_odoo_configuration(config, yml, PYTHON_VERSION, settings, globals
         service["environment"]["ADDITIONAL_ODOO_CONFIG"] = config
 
 def _apply_fluentd_logging(config, yml, settings, globals):
-    if not config.run_fluentd:
+    if not config.run_logcollector:
         return
 
     get_services = globals["tools"].get_services

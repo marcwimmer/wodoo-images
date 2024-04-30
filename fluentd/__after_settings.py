@@ -9,7 +9,7 @@ def after_settings(settings, config):
     url = "git@github.com:Odoo-Ninjas/wodoo-logging"
     if url in gimera.read_text():
         return
-    if not config.RUN_FLUENTD:
+    if not config.RUN_LOGCOLLECTOR:
         return
     manifestfile = Path(os.getcwd()) / "MANIFEST"
     manifest = eval(manifestfile.read_text())
