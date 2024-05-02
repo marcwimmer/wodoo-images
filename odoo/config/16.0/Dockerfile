@@ -99,7 +99,7 @@ RUN echo "$ODOO_DEB_REQUIREMENTS"  | base64 --decode > /root/deb_requirements.tx
 RUN xargs apt install -y < /root/deb_requirements.txt
 
 RUN echo "$ODOO_REQUIREMENTS"  | base64 --decode > /root/pip_requirements.txt
-RUN pip3 install -r /root/pip_requirements.txt
+RUN pip3 install -r /root/pip_requirements.txt --force --force-reinstall --ignore-installed
 
 RUN echo "$ODOO_FRAMEWORK_REQUIREMENTS"  | base64 --decode > /root/framework_requirements.txt
 RUN pip3 install -r /root/framework_requirements.txt
@@ -176,7 +176,6 @@ RUN apt update && apt-get install \
             locales
 
 RUN locale-gen en_US.UTF-8 && dpkg-reconfigure locales
-
 
 WORKDIR /tmp
 
