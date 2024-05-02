@@ -11,8 +11,8 @@ services:
     build: $ODOO_IMAGES/logcollector/fluentd
     restart: unless-stopped
     volumes:
-      - $ODOO_IMAGES/fluentd/fluentd/conf:/fluentd/etc
-      - $ODOO_IMAGES/fluentd/fluentd-configs:/fluentd-configs
+      - $ODOO_IMAGES/logcollector/fluentd/conf:/fluentd/etc
+      - $ODOO_IMAGES/logcollector/fluentd-configs:/fluentd-configs
       - $HOME/.fluentd.sock.$PROJECT_NAME:/var/run/fluentd.sock
     depends_on:
       - fluentd_postgres
