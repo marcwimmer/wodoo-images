@@ -5,7 +5,6 @@
   "author": "Marc Wimmer <marc@itewimmer.de>",
   "main": "server.js",
   "scripts": {
-    //"start": "node --inspect=0.0.0.0:9229 server.js"
     "start": "node server.js"
   },
   "dependencies": {
