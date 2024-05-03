@@ -111,6 +111,9 @@ app.use("/websocket", createProxyMiddleware({
 //     ws: true,
 // }));
 
+app.use("/documents/content", createProxyMiddleware({
+    target: 'httpssssss://' + process.env.ODOO_HOST + ':8072', ws: true
+}));
 
 app.all("/*", (req, res, next) => {
     if (options.odoo_tcp_check) {
