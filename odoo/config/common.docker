@@ -2,7 +2,7 @@
 RUN \
 python3 -mpip install pipx && \
 python3 -mpipx ensurepath && \
-mkdir /usr/local/bin/pipxbin && \
+mkdir /usr/local/bin/pipxbin -p && \
 PIPX_DEFAULT_PYTHON=/usr/local/bin/python3
 
 RUN \
