@@ -1,0 +1,1 @@
+# */1 * * * * /root/venv/bin/python3 /cronjobs/purge_tables.py

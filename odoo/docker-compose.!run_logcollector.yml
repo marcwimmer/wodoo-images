@@ -1,0 +1,14 @@
+# manage-order 1000
+services:
+  odoo_base:
+    logging:
+      options:
+        max-size: 1g
+  odoo_queuejobs:
+    logging:
+        options:
+            max-size: 3g
+  odoo_cronjobs:
+    logging:
+        options:
+            max-size: 3g

@@ -103,7 +103,7 @@ RUN xargs apt install -y < /root/deb_requirements.txt
 
 RUN echo "$ODOO_REQUIREMENTS"  | base64 --decode > /root/pip_requirements.txt
 RUN cat /root/pip_requirements.txt | grep -v postal > /root/pip_requirements.filtered.txt
-RUN . /opt/venv/bin/activate && /opt/venv/bin/python3 -mpip install -r /root/pip_requirements.filtered.txt
+RUN . /opt/venv/bin/activate && /opt/venv/bin/python3 -mpip install -r /root/pip_requirements.filtered.txt --force --force-reinstall --ignore-installed
 
 RUN /opt/venv/bin/python3 -mpip install pudb ipython debugpy
 

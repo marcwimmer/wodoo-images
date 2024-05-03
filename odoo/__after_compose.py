@@ -102,6 +102,8 @@ def after_compose(config, settings, yml, globals):
 
     _determine_odoo_configuration(config, yml, PYTHON_VERSION, settings, globals)
 
+    _apply_fluentd_logging(config, yml, settings, globals)
+
 
 def store_sha_of_external_deps(config, deps):
     v = ""
@@ -120,16 +122,16 @@ def _filter_pip(packages, config):
             return None
         if os.uname().machine == "aarch64":
             if float(config.ODOO_VERSION) in [14.0, 15.0, 16.0]:
-                if 'gevent' in x:
+                if "gevent" in x:
                     return "gevent==21.12.0"
-                if 'greenlet' in x:
-                    return 'greenlet'
+                if "greenlet" in x:
+                    return "greenlet"
         return x
-
 
     packages = list(sorted(set(filter(bool, map(_map, packages)))))
 
     return packages
+
 
 def _determine_requirements(config, yml, PYTHON_VERSION, settings, globals):
     if float(config.ODOO_VERSION) < 13.0:
@@ -166,9 +168,13 @@ def _determine_requirements(config, yml, PYTHON_VERSION, settings, globals):
         service["build"]["args"]["ODOO_DEB_REQUIREMENTS"] = base64.encodebytes(
             "\n".join(sorted(external_dependencies["deb"])).encode("utf-8")
         ).decode("utf-8")
-        service["build"]["args"]["ODOO_FRAMEWORK_REQUIREMENTS"] = base64.encodebytes(
-            (config.dirs["odoo_home"] / "requirements.txt").read_bytes()
-        ).decode("utf-8")
+        service["build"]["args"]["ODOO_FRAMEWORK_REQUIREMENTS"] = (
+            _filter_framework_requirements(
+                base64.encodebytes(
+                    (config.dirs["odoo_home"] / "requirements.txt").read_bytes()
+                ).decode("utf-8")
+            )
+        )
         service["build"]["args"]["CUSTOMS_SHA"] = sha
         service["build"]["args"]["ODOO_PYTHON_VERSION"] = settings[
             "ODOO_PYTHON_VERSION"
@@ -181,6 +187,8 @@ def _determine_requirements(config, yml, PYTHON_VERSION, settings, globals):
         "\n".join(external_dependencies["pip"])
     )
 
+    _hack_patch_requirements(external_dependencies["pip"])
+
     # put the collected requirements into project root
     req_file_all = config.WORKING_DIR / "requirements.txt.all"
     req_file_all.write_text("\n".join(external_dependencies["pip"]))
@@ -189,6 +197,11 @@ def _determine_requirements(config, yml, PYTHON_VERSION, settings, globals):
     req_file.write_text("\n".join(external_dependencies_justaddons["pip"]))
 
     # put hash of requirements in root
+
+
+def _hack_patch_requirements(external_dependencies):
+    # html package changed
+    external_dependencies.append("lxml-html-clean")
 
 
 def _dir_dirty(globals):
@@ -273,7 +286,7 @@ def _get_dependencies(config, globals, PYTHON_VERSION, exclude=None):
             )
         )
     )
-    external_dependencies['pip'] = _filter_pip(external_dependencies['pip'], config)
+    external_dependencies["pip"] = _filter_pip(external_dependencies["pip"], config)
     return external_dependencies
 
 
@@ -338,3 +351,25 @@ def _determine_odoo_configuration(config, yml, PYTHON_VERSION, settings, globals
     for odoo_machine in odoo_machines:
         service = yml["services"][odoo_machine]
         service["environment"]["ADDITIONAL_ODOO_CONFIG"] = config
+
+
+def _apply_fluentd_logging(config, yml, settings, globals):
+    if not config.run_logcollector:
+        return
+
+    get_services = globals["tools"].get_services
+    odoo_machines = get_services(config, "odoo_base", yml=yml)
+    for odoo_machine in odoo_machines:
+        service = yml["services"][odoo_machine]
+        tag = service["logging"]["options"]["tag"]
+        tag = tag.replace("__SERVICE__", odoo_machine)
+        service["logging"]["options"]["tag"] = tag
+
+def _filter_framework_requirements(reqs):
+    # Prob: lxml splitted away html clean
+    # As lxml is always coming with odoo we dont touch the version here
+    def _f(line):
+        if 'lxml' in line:
+            return False
+        return True
+    return '\n'.join(filter(_f, reqs.splitlines()))
