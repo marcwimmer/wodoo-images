@@ -105,7 +105,9 @@ def _run_job(job):
             now = datetime.utcnow()
 
             if not i % 3600:
-                logging.info(f"Next run of {job['cmd']} at {job['next']} - now is {now}")
+                logging.info(
+                    f"Next run of {job['cmd']} at {job['next']} - now is {now}"
+                )
 
             if job["next"] < now:
                 logger.info(f"Starting now the following job: {job['cmd']}")
@@ -114,7 +116,10 @@ def _run_job(job):
                     execute(job["cmd"])
                 finally:
                     end = datetime.now()
-                logger.info("{job['name']}: Execution took: {(end - started).total_seconds()}seconds")
+                logger.info(
+                    f"{job['name']}: Execution took: "
+                    f"{(end - started).total_seconds()}seconds"
+                )
 
                 itr = croniter(job["schedule"], arrow.get().naive)
                 job["next"] = itr.get_next(datetime)
