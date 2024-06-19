@@ -1,10 +1,12 @@
 var express = require('express');
 var net = require('net');
 var httpProxy = require('http-proxy');
+const path = require('node:path');
 var proxy = httpProxy.createProxyServer();
 const web_o = Object.values(require('http-proxy/lib/http-proxy/passes/web-outgoing'));
 var serveStatic = require('serve-static');
 var serveIndex = require('serve-index');
+var favicon = require('serve-favicon');
 
 const { createProxyMiddleware } = require('http-proxy-middleware');
 var app = express();
@@ -19,8 +21,21 @@ const server_odoo = {
     port: 8069,
 };
 
+function override_favicon(req, res) {
+    if (process.env.DEVMODE === "1") {
+        if (req.path.indexOf("favicon.ico") > 0 || req.path.indexOf("/favicon/") >= 0) {
+            const path_icon = path.join(__dirname, 'favicon_dev.png');
+            res.sendFile(path_icon);
+            return true;
+        }
+    }
+}
 
 function _call_proxy(req, res, url) {
+    //console.log(req);
+    if (override_favicon(req, res)) {
+        return;
+    }
     proxy.web(req, res, {
         target: url,
         selfHandleResponse: true,
@@ -112,7 +127,7 @@ app.use("/websocket", createProxyMiddleware({
 // }));
 
 app.use("/documents/content", createProxyMiddleware({
-    target: 'httpssssss://' + process.env.ODOO_HOST + ':8072', ws: true
+    target: 'https://' + process.env.ODOO_HOST + ':8072', ws: true
 }));
 
 app.all("/*", (req, res, next) => {
@@ -125,6 +140,7 @@ app.all("/*", (req, res, next) => {
         _call_proxy(req, res, server_odoo);
     }
 });
+
 
 var server = app.listen(80, '0.0.0.0', () => {
     console.log('Proxy server listening on 0.0.0.0:80.');
