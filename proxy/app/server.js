@@ -6,7 +6,6 @@ var proxy = httpProxy.createProxyServer();
 const web_o = Object.values(require('http-proxy/lib/http-proxy/passes/web-outgoing'));
 var serveStatic = require('serve-static');
 var serveIndex = require('serve-index');
-var favicon = require('serve-favicon');
 
 const { createProxyMiddleware } = require('http-proxy-middleware');
 var app = express();
