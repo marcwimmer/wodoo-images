@@ -17,6 +17,7 @@ robotframework-selenium2library==3.0.0
 robotframework-selenium2screenshots==0.8.1
 robotframework-seleniumlibrary==6.0.0
 robotframework-stacktrace==0.4.1
+robotframework-screencaplibrary==1.6.0
 robotframework-xvfb==1.2.2
 coverage==6.4.2
 elaphe3==0.2.0
