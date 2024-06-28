@@ -221,12 +221,12 @@ libsasl2-dev python-dev libldap2-dev libssl-dev \
 g++
 RUN \
 python3 -mpip install psycopg2-binary==2.8 && \
-python3 -mpip install lxml && \
 python3 -mpip install gevent && \
 python3 -mpip install greenlet
 COPY config/12.0/requirements.txt requirements.txt
 RUN python3 -mpip install -r requirements.txt
 RUN python3 -mpip install babel ics pdf2image zxcvbn reportlab==3.6.12 odoorpc
+RUN pip3 install lxml[html_clean]==4.8.0
 
 # install wodoo
 RUN \
@@ -249,3 +249,4 @@ RUN pip install zeep==3.4.0
 RUN pip install sentry-sdk==0.19.5
 
 WORKDIR /opt/odoo
+
