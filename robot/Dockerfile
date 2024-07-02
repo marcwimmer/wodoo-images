@@ -1,4 +1,4 @@
-FROM ubuntu:22.04 as build_gecko
+FROM ubuntu:24.04 as build_gecko
 ARG WODOO_VERSION
 LABEL authors=Mozilla,jamesmortensen
 
@@ -6,7 +6,7 @@ LABEL authors=Mozilla,jamesmortensen
 # local/geckodriver-arm-builder
 #=========
 
-ENV GECKODRIVER_VERSION=0.33.0
+ENV GECKODRIVER_VERSION=0.34.0
 USER root
 
 
@@ -29,19 +29,32 @@ RUN cargo build --release
 RUN mv ./target/release/geckodriver /usr/local/bin/
 
 
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 ARG TARGETARCH
 
 ENV DEBIAN_FRONTEND=noninteractive
+
 RUN apt update -q && \
 apt install -y wget unzip python3 \
 python3-pip python3-magic libmagickwand-dev xvfb \
 sudo curl software-properties-common pipx
 
+RUN \
+add-apt-repository ppa:deadsnakes/ppa && \
+apt update && \
+apt install -y python3.11 python3.11-dev python3.11-venv
+
 COPY ./requirements.txt /tmp/requirements.txt
-RUN python3 -mpip install pip -U && \
-python3 -mpip install setuptools -U && \
-python3 -mpip install --no-cache-dir -r /tmp/requirements.txt && \
+RUN python3.11 -mvenv /opt/venv
+RUN \
+. /opt/venv/bin/activate && \
+python -mpip install pip -U && \
+python -mpip install 'cython<3.0.0' && \
+python -mpip install wheel && \
+python -mpip install --no-build-isolation setuptools==57.5.0 -U
+RUN \
+. /opt/venv/bin/activate && \
+python -mpip install --no-cache-dir --no-build-isolation -r /tmp/requirements.txt && \
 rm -rf /tmp/requirements.txt
 
 # Download and install Firefox
@@ -53,9 +66,7 @@ apt remove firefox && \
 apt update && \
 apt install -y firefox
 
-#ADD install_geckodriver.sh .
-#RUN /bin/bash install_geckodriver.sh
-COPY --from=build_gecko /usr/local/bin/geckodriver /usr/local/bin
+# COPY --from=build_gecko /usr/local/bin/geckodriver /usr/local/bin
 ARG WODOO_VERSION
 
 # As this image cannot run in non-headless mode anyway, it's better to forcibly
@@ -98,14 +109,15 @@ RUN apt install docker-ce docker-ce-cli containerd.io -y
 #--------------------------------------------
 
 RUN usermod -aG docker robot
-RUN apt update && \
+RUN \ 
 apt install -y pipx gosu && \
 chown robot /opt/robot -R
 USER robot
 ENV WODOO_VERSION=$WODOO_VERSION
 RUN \
 mkdir /opt/robot/.local/pipx -p && \
-pipx install wodoo==$WODOO_VERSION --force
+
+pipx install wodoo==$WODOO_VERSION --force --python python3.11
 ENV PATH="$PATH:/opt/robot/.local/bin"
 RUN echo $PATH
 
@@ -115,9 +127,15 @@ RUN chown robot /opt/robot/.ssh/config && \
 chmod 600 /opt/robot/.ssh/* && \
 chown -R robot /opt/robot
 
+# RUN \
+# . /opt/venv/bin/activate && \
+# pip install webdrivermanager && \
+# python3 /opt/venv/bin/webdrivermanager firefox chrome --linkpath /usr/local/bin
+
 COPY robotest.py ./
 COPY entrypoint.sh ./
 RUN chmod a+x entrypoint.sh
 USER root
+RUN apt install firefox firefox-geckodriver -y
 ENTRYPOINT /opt/robot/entrypoint.sh
 

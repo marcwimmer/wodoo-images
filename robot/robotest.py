@@ -1,3 +1,4 @@
+#!/opt/venv/bin/python
 # pylint: disable=import-outside-toplevel
 import base64
 from copy import deepcopy
@@ -112,7 +113,8 @@ def _run_test(
         def _get_cmd(dryrun):
             cmd = (
                 [
-                    "/usr/local/bin/robot",
+                    "/opt/venv/bin/python",
+                    "/opt/venv/bin/robot",
                     "-X",  # exit on failure
                 ]
                 + vars_command
