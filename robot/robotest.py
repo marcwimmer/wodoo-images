@@ -244,6 +244,7 @@ def run_tests(params, test_files, token, results_file):
     token_dir = output_dir / token
     _clean_dir(token_dir)
     src_dir = Path("/opt/src")
+    params['TOKEN'] = token
 
     test_results = []
     test_results += _run_tests(
