@@ -1,0 +1,25 @@
+services:
+    vscode:
+        build: 
+          context: $ODOO_IMAGES/vscode
+        restart: "unless-stopped"
+        environment:
+            - DISPLAY_WIDTH=1024
+            - DISPLAY_HEIGHT=768
+    novnc_vscode:
+        build:
+          context: $ODOO_IMAGES/novnc
+          args:
+            relpathname: vscode
+        restart: "unless-stopped"
+        links:
+            - vscode
+        environment:
+          - DISPLAY_WIDTH=1024
+          - DISPLAY_HEIGHT=768
+          - AUTOCONNECT=true
+          # - RUN_XTERM={yes|no} (yes)
+          # - RUN_FLUXBOX={yes|no} (yes)
+          - VNC_PASSWORD=code
+          - VNC_SERVER=vscode:5900
+          - VIEW_ONLY=false

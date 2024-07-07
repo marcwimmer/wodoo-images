@@ -2,10 +2,11 @@ var express = require('express');
 var net = require('net');
 var httpProxy = require('http-proxy');
 const path = require('node:path');
-var proxy = httpProxy.createProxyServer();
+var proxy = httpProxy.createProxyServer({ ws: true });
 const web_o = Object.values(require('http-proxy/lib/http-proxy/passes/web-outgoing'));
 var serveStatic = require('serve-static');
 var serveIndex = require('serve-index');
+
 
 const { createProxyMiddleware } = require('http-proxy-middleware');
 var app = express();
@@ -91,6 +92,32 @@ app.use("/mailer", createProxyMiddleware({
 app.use("/code", createProxyMiddleware({
     target: 'http://' + process.env.THEIA_HOST + ':80',
     ws: true
+}));
+// perhaps this works: https://github.com/sukkamehu/nodejs-novnc/tree/master/app
+// app.use("/vscode", createProxyMiddleware({
+//     target: 'http://novnc_vscode:6080',
+//     ws: true,
+//     changeOrigin: true,
+//     pathRewrite: {
+//         '^/vscode': '', // Remove '/vnc' from the path
+//     },
+//     onProxyReq: (proxyReq, req, res) => {
+//         console.log(`Proxying request to: ${target}${req.url}`);
+//     },
+// }));
+app.use("/vscode", createProxyMiddleware({
+    changeOrigin: true,
+    pathRewrite: {
+        '^/vscode/': '/',
+    },
+    ws: true, // Enable WebSocket proxying
+    logLevel: 'debug', // Enable debug logging for troubleshooting
+    target: 'http://novnc_vscode:6080'
+}, (error) => {
+    if (error) {
+        console.error('Proxy error:', error);
+        res.status(500).send('Proxy error');
+    }
 }));
 
 app.use("/logs", createProxyMiddleware({

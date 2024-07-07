@@ -1,0 +1,15 @@
+services:
+    # novnc:
+    #     build: $ODOO_IMAGES/novnc
+    #     restart: "unless-stopped"
+    #     ports: 
+    #       - "0.0.0.0:6080:6080"
+    #     environment:
+    #       - DISPLAY_WIDTH=1024
+    #       - DISPLAY_HEIGHT=768
+    #       - AUTOCONNECT=true
+    #       # - RUN_XTERM={yes|no} (yes)
+    #       # - RUN_FLUXBOX={yes|no} (yes)
+    #       - VNC_PASSWORD=code
+    #       - VNC_SERVER=vscode:5900
+    #       - VIEW_ONLY=false
