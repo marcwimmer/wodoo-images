@@ -1,6 +1,6 @@
 #!/bin/bash
 if [[ "$DEVMODE" == "1" ]]; then
-DISPLAY=:1.0
+DISPLAY=:0.0
 export DISPLAY
 
 killall vscode
@@ -26,11 +26,26 @@ cp $USER_HOME/.Xauthority /root/.Xauthority
 chown root:root / root/.Xauthority
 rsync $USER_HOME/.vnc/ /root/.vnc/ -ar
 
-Xvfb $DISPLAY -screen 0 "${DISPLAY_WIDTH}x${DISPLAY_HEIGHT}x16" &
-/usr/bin/x11vnc -display ${DISPLAY} -auth guess -forever -rfbport 5900 -rfbauth /root/.vnc/passwd &
+Xvfb $DISPLAY -screen 0 "${DISPLAY_WIDTH}x${DISPLAY_HEIGHT}x${DISPLAY_COLOR}" &
+/usr/bin/x11vnc -display ${DISPLAY} -auth guess \
+	-forever -rfbport 5900 -rfbauth /root/.vnc/passwd \
+	-scale "${DISPLAY_WIDTH}x${DISPLAY_HEIGHT}" \
+	&
 xhost +local: &
 # gosu $USERNAME xeyes
+STARTUPFILE_FLUXBOX=/home/user1/.fluxbox/startup
+echo '#!/bin/bash' > $STARTUPFILE_FLUXBOX
+echo 'sleep 5' >> $STARTUPFILE_FLUXBOX
+echo "DISPLAY=$DISPLAY /usr/bin/code-insiders /opt/src &" >> $STARTUPFILE_FLUXBOX
+chown $USERNAME:$USERNAME $STARTUPFILE_FLUXBOX
+chmod a+x $STARTUPFILE_FLUXBOX
+gosu $USERNAME fluxbox &
+
 line="DISPLAY=$DISPLAY /usr/bin/code-insiders /opt/src"
-gosu $USERNAME /bin/bash -c "$line"
+gosu $USERNAME bash -c "$line"
+sleep 2
+WINDOW_ID=$(DISPLAY="$DISPLAY" xdotool getactivewindow)
+xdotool windowactivate --sync $WINDOW_ID key --clearmodifiers alt+F10
+
 sleep infinity
 fi

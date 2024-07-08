@@ -24,7 +24,7 @@ services:
         environment:
             - DISPLAY_WIDTH=${VSCODE_WIDTH}
             - DISPLAY_HEIGHT=${VSCODE_HEIGHT}
-            - DISPLAY_COLOR=16
+            - DISPLAY_COLOR=${VSCODE_COLOR}
     novnc_vscode:
         build:
           context: $ODOO_IMAGES/novnc
@@ -36,9 +36,10 @@ services:
         environment:
           - DISPLAY_WIDTH=${VSCODE_WIDTH}
           - DISPLAY_HEIGHT=${VSCODE_HEIGHT}
+          - DISPLAY_COLOR=${VSCODE_COLOR}
           - AUTOCONNECT=true
           # - RUN_XTERM={yes|no} (yes)
-          # - RUN_FLUXBOX={yes|no} (yes)
+          - RUN_FLUXBOX=yes
           - VNC_PASSWORD=code
           - VNC_SERVER=vscode:5900
           - VIEW_ONLY=false
