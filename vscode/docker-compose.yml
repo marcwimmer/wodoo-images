@@ -2,10 +2,19 @@ services:
     vscode:
         build: 
           context: $ODOO_IMAGES/vscode
+          args:
+            OWNER_UID: $OWNER_UID
         restart: "unless-stopped"
+        ports:
+            - "5900:5900"
+        volumes:
+          - ${CUSTOMS_DIR}:/opt/src
+          - ${ODOO_IMAGES}/vscode/user_data:/home/userdata
+          - ${ODOO_IMAGES}/vscode/entrypoint.sh:/entrypoint.sh
         environment:
             - DISPLAY_WIDTH=1024
             - DISPLAY_HEIGHT=768
+            - DISPLAY_COLOR=16
     novnc_vscode:
         build:
           context: $ODOO_IMAGES/novnc
