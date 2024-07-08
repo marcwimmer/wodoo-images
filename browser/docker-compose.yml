@@ -2,22 +2,22 @@
 version: '3.5'
 
 services:
-    novnc:
+    novnc_browser:
         image: javanile/novnc
         environment:
             - REMOTE_HOST=browser
             - REMOTE_PORT=5901
-        ports:
-            - $VNC_PORT:8081
+        # ports:
+        #     - $VNC_PORT:8081
         links:
             - browser
-    novnc_large:
+    novnc_browser_large:
         image: javanile/novnc
         environment:
             - REMOTE_HOST=browser_large
             - REMOTE_PORT=5901
-        ports:
-            - $VNC_PORT_LARGE:8081
+        # ports:
+        #     - $VNC_PORT_LARGE:8081
     browser:
         build: $ODOO_IMAGES/browser
         ports:
