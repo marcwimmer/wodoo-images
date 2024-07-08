@@ -19,7 +19,7 @@ RUN bash install_libpostal.sh
 # --------------------------------------------------------------------
 # COMPILE PYTHON
 # --------------------------------------------------------------------
-FROM $BASE_IMAGE as python_builder
+FROM $BASE_IMAGE AS python_builder
 ARG ODOO_PYTHON_VERSION
 COPY python/Python-${ODOO_PYTHON_VERSION}.tgz /usr/local/src/python
 WORKDIR /usr/local/src
