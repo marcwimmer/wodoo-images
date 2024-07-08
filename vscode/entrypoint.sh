@@ -3,9 +3,9 @@ if [[ "$DEVMODE" == "1" ]]; then
 DISPLAY=:1.0
 export DISPLAY
 
+killall vscode
 killall xvfb
 killall x11vnc
-killall vscode
 ps aux
 rm /tmp/.*lock /tmp/*lock /tmp/.*X11* /tmp/*vscode* -R
 rm /tmp/.X11-unix
@@ -30,6 +30,9 @@ ls -lhtra /root/.vnc
 
 Xvfb $DISPLAY -screen 0 "${DISPLAY_WIDTH}x${DISPLAY_HEIGHT}x16" &
 /usr/bin/x11vnc -display ${DISPLAY} -auth guess -forever -rfbport 5900 -rfbauth /root/.vnc/passwd &
-code-insiders --no-sandbox --user-data-dir /codedata
+xhost +local: &
+# gosu $USERNAME xeyes
+line="DISPLAY=$DISPLAY /usr/bin/code-insiders"
+gosu $USERNAME /bin/bash -c "$line"
 sleep infinity
 fi

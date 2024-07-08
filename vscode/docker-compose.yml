@@ -4,6 +4,9 @@ services:
           context: $ODOO_IMAGES/vscode
           args:
             OWNER_UID: $OWNER_UID
+        cap_add:
+          # required by vscode
+          - SYS_ADMIN
         restart: "unless-stopped"
         ports:
             - "5900:5900"
