@@ -46,9 +46,10 @@ RUN mv /tmp/settings "/home/user1/.config/Code - Insiders/User/settings.json"
 RUN chown -R user1:user1 /home/user1
 
 USER user1
+# ADD some extensions here
 RUN \
 /usr/bin/code-insiders --install-extension ms-python.python && \
 /usr/bin/code-insiders --install-extension robocorp.robotframework-lsp && \
-/usr/bin/code-insiders --install-extension vscode-vim.vim
+/usr/bin/code-insiders --install-extension vscodevim.vim
 
 USER root
