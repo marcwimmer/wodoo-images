@@ -15,7 +15,6 @@ RUN userdel -r $(getent passwd $OWNER_UID | cut -d: -f1) || true
 RUN groupdel $USERNAME || true
 RUN groupadd $USERNAME || true
 RUN useradd -u $OWNER_UID -g $USERNAME -m $USERNAME
-ADD passwd /home/$USERNAME/.vnc/passwd
 RUN  \
 mkdir -p /home/$USERNAME/.vnc && \
 chown $USERNAME:$USERNAME /home/$USERNAME/.vnc -R

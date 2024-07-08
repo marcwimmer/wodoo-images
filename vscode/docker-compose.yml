@@ -41,6 +41,5 @@ services:
           - AUTOCONNECT=true
           # - RUN_XTERM={yes|no} (yes)
           - RUN_FLUXBOX=yes
-          - VNC_PASSWORD=code
           - VNC_SERVER=vscode:5900
           - VIEW_ONLY=false
