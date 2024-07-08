@@ -3,9 +3,23 @@ ARG OWNER_UID
 ARG TARGETARCH
 
 RUN apt update && apt install -y curl
-RUN curl  -L -o /tmp/vscode.deb \
-"https://code.visualstudio.com/sha/download?build=insider&os=linux-deb-$TARGETARCH"
 RUN apt install -y gpg x11vnc xvfb xauth git gosu net-tools rsync
+RUN python3 <<'EOF'
+
+import os
+from pathlib import Path
+downloadlink = Path("/tmp/downloadlink")
+link = ("https://code.visualstudio.com/sha/download?build=insider&os=linux-deb-")
+if os.getenv("TARGETARCH") == "amd64": 
+   link += "x64"
+else:
+    link += os.getenv("TARGETARCH")
+downloadlink.write_text(link)
+EOF
+
+RUN echo "Download link: $(cat /tmp/downloadlink)"
+RUN curl  -L -o /tmp/vscode.deb "$(cat /tmp/downloadlink)"
+
 RUN apt install -y /tmp/vscode.deb
 RUN apt update && apt upgrade -y
 ENTRYPOINT /bin/bash /entrypoint.sh
