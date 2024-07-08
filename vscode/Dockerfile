@@ -21,4 +21,34 @@ ADD passwd /home/$USERNAME/.vnc/passwd
 RUN  \
 mkdir -p /home/$USERNAME/.vnc && \
 chown $USERNAME:$USERNAME /home/$USERNAME/.vnc -R
-RUN apt install -y x11-apps
+RUN apt install -y x11-apps python3-pip python3-venv
+
+RUN apt install -y postgresql-server-dev-16
+RUN apt-get update && \
+    apt-get install -y software-properties-common && \
+    add-apt-repository ppa:deadsnakes/ppa && \
+    apt-get update && \
+    apt-get install -y python3.9 python3.9-dev python3.9-distutils python3.9-venv
+
+USER $USERNAME
+RUN cd /home/$USERNAME && \
+python3.9 -mvenv venv && \
+. venv/bin/activate && \
+./venv/bin/python -mpip install pipx && \
+pipx install wodoo
+
+
+RUN mkdir -p "/home/user1/.config/Code - Insiders/User"
+ADD default_vscode_settings.json /tmp/settings
+
+USER root
+RUN mv /tmp/settings "/home/user1/.config/Code - Insiders/User/settings.json"
+RUN chown -R user1:user1 /home/user1
+
+USER user1
+RUN \
+/usr/bin/code-insiders --install-extension ms-python.python && \
+/usr/bin/code-insiders --install-extension robocorp.robotframework-lsp && \
+/usr/bin/code-insiders --install-extension vscode-vim.vim
+
+USER root

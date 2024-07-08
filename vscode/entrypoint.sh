@@ -26,13 +26,11 @@ cp $USER_HOME/.Xauthority /root/.Xauthority
 chown root:root / root/.Xauthority
 rsync $USER_HOME/.vnc/ /root/.vnc/ -ar
 
-ls -lhtra /root/.vnc
-
 Xvfb $DISPLAY -screen 0 "${DISPLAY_WIDTH}x${DISPLAY_HEIGHT}x16" &
 /usr/bin/x11vnc -display ${DISPLAY} -auth guess -forever -rfbport 5900 -rfbauth /root/.vnc/passwd &
 xhost +local: &
 # gosu $USERNAME xeyes
-line="DISPLAY=$DISPLAY /usr/bin/code-insiders"
+line="DISPLAY=$DISPLAY /usr/bin/code-insiders /opt/src"
 gosu $USERNAME /bin/bash -c "$line"
 sleep infinity
 fi
