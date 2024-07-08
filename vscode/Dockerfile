@@ -35,23 +35,42 @@ python3.9 -mvenv venv && \
 ./venv/bin/python -mpip install pipx && \
 pipx install wodoo && \
 pipx install gimera
-#RUN gimera completion -x && \
-#odoo completion -x && \
 
 
-RUN mkdir -p "/home/user1/.config/Code - Insiders/User"
+RUN mkdir -p "/home/$USERNAME/.config/Code - Insiders/User"
 ADD default_vscode_settings.json /tmp/settings
 
 USER root
-RUN mv /tmp/settings "/home/user1/.config/Code - Insiders/User/settings.json"
-RUN chown -R user1:user1 /home/user1
+RUN mv /tmp/settings "/home/$USERNAME/.config/Code - Insiders/User/settings.json"
+RUN chown -R $USERNAME:$USERNAME /home/$USERNAME
 
-USER user1
+USER $USERNAME
 # ADD some extensions here
 RUN \
 /usr/bin/code-insiders --install-extension ms-python.python && \
 /usr/bin/code-insiders --install-extension robocorp.robotframework-lsp && \
 /usr/bin/code-insiders --install-extension vscodevim.vim && \
 /usr/bin/code-insiders --install-extension MarcWimmerITE.odoobrowserITE
+
+USER root
+
+# install docker cli
+RUN apt install -y ca-certificates curl gnupg lsb-release
+RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+RUN apt update
+RUN apt install docker-ce docker-ce-cli containerd.io -y
+RUN delgroup systemd-journal && groupmod -g 999 docker
+RUN usermod -aG docker $USERNAME
+
+RUN chsh -s /bin/bash $USERNAME
+RUN cp /etc/skel/.bashrc /home/$USERNAME/.bashrc
+RUN chown $USERNAME:$USERNAME /home/$USERNAME/.vnc -R
+USER $USERNAME
+ENV SHELL=bin/bash
+RUN echo "export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/home/$USERNAME/.local/bin" >> /home/$USERNAME/.bashrc
+RUN echo ". /tmp/envvars.sh" >> /home/$USERNAME/.bashrc
+RUN ~/.local/bin/odoo completion -x
+RUN ~/.local/bin/gimera completion -x
 
 USER root

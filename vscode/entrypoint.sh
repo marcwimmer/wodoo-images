@@ -32,6 +32,12 @@ Xvfb $DISPLAY -screen 0 "${DISPLAY_WIDTH}x${DISPLAY_HEIGHT}x${DISPLAY_COLOR}" &
 	-scale "${DISPLAY_WIDTH}x${DISPLAY_HEIGHT}" \
 	&
 xhost +local: &
+
+# transfer some environment variables
+echo "export project_name=$project_name" > /tmp/envvars.sh
+echo "export CUSTOMS_DIR=$CUSTOMS_DIR" >> /tmp/envvars.sh
+echo "alias odoo=\"$USER_HOME/.local/bin/odoo --project-name=$project_name\"" >> $USER_HOME/.bash_aliases
+
 # gosu $USERNAME xeyes
 STARTUPFILE_FLUXBOX=/home/user1/.fluxbox/startup
 echo '#!/bin/bash' > $STARTUPFILE_FLUXBOX
