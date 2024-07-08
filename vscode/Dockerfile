@@ -1,9 +1,10 @@
 FROM ubuntu:24.04
 ARG OWNER_UID
+ARG TARGETARCH
 
 RUN apt update && apt install -y curl
 RUN curl  -L -o /tmp/vscode.deb \
-'https://code.visualstudio.com/sha/download?build=insider&os=linux-deb-arm64'
+"https://code.visualstudio.com/sha/download?build=insider&os=linux-deb-$TARGETARCH"
 RUN apt install -y gpg x11vnc xvfb xauth git gosu net-tools rsync
 RUN apt install -y /tmp/vscode.deb
 RUN apt update && apt upgrade -y
