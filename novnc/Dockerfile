@@ -35,5 +35,4 @@ RUN sed -i "/wait ${proxy_pid}/i if [ -n \"\$VIEW_ONLY\" ]; then sed -i \"s/UI.r
 RUN sed -i "s|\"app|\"/$relpathname/app|g" /root/noVNC/vnc.html
 RUN cp /root/noVNC/vnc.html /root/noVNC/index.html
 RUN rsync /root/noVNC/ /root/noVNC/$relpathname/ -ar
-RUN find /root/noVNC -name base.css 
 ENTRYPOINT [ "bash", "-c", "/root/noVNC/utils/novnc_proxy --vnc ${VNC_SERVER} " ]
