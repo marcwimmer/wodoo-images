@@ -4,7 +4,6 @@ var httpProxy = require('http-proxy');
 const path = require('node:path');
 var proxy = httpProxy.createProxyServer({ ws: true });
 const web_o = Object.values(require('http-proxy/lib/http-proxy/passes/web-outgoing'));
-var serveStatic = require('serve-static');
 var serveIndex = require('serve-index');
 
 
@@ -78,13 +77,14 @@ app.use("/code", createProxyMiddleware({
     target: 'http://' + process.env.THEIA_HOST + ':80',
     ws: true
 }));
-app.use("/vscode", createProxyMiddleware({
-    changeOrigin: true,
+
+app.use(["/vscode", "/websockify"], createProxyMiddleware({
     pathRewrite: {
         '^/vscode/': '/',
     },
     ws: true, // Enable WebSocket proxying
     logLevel: 'debug', // Enable debug logging for troubleshooting
+    changeOrigin: true,
     target: 'http://novnc_vscode:6080'
 }, (error) => {
     if (error) {
