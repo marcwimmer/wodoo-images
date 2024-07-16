@@ -28,7 +28,9 @@ rsync $USER_HOME/.vnc/ /root/.vnc/ -ar
 
 Xvfb $DISPLAY -screen 0 "${DISPLAY_WIDTH}x${DISPLAY_HEIGHT}x${DISPLAY_COLOR}" &
 /usr/bin/x11vnc -display ${DISPLAY} -auth guess \
-	-forever -rfbport 5900 \
+	-forever \
+	-rfbport 5900 \
+	-noxdamage \
 	-nopw \
 	-scale "${DISPLAY_WIDTH}x${DISPLAY_HEIGHT}" \
 	&

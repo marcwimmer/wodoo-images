@@ -34,5 +34,18 @@ RUN sed -i "/wait ${proxy_pid}/i if [ -n \"\$VIEW_ONLY\" ]; then sed -i \"s/UI.r
 
 RUN sed -i "s|\"app|\"/$relpathname/app|g" /root/noVNC/vnc.html
 RUN cp /root/noVNC/vnc.html /root/noVNC/index.html
-RUN rsync /root/noVNC/ /root/noVNC/$relpathname/ -ar
+
+RUN python3 <<EOF
+# make available for sub path
+from pathlib import Path
+import subprocess
+import os
+
+source = Path("/root/noVNC")
+dest = Path("/root/noVNC") / os.getenv("relpathname")
+dest.mkdir(exist_ok=True, parents=True)
+print(f"copying from {source} to {dest}")
+subprocess.check_call(["rsync", str(source) + "/", str(dest) + "/", "-ar"])
+EOF
+
 ENTRYPOINT [ "bash", "-c", "/root/noVNC/utils/novnc_proxy --vnc ${VNC_SERVER} " ]
