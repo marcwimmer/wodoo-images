@@ -2,10 +2,10 @@ var express = require('express');
 var net = require('net');
 var httpProxy = require('http-proxy');
 const path = require('node:path');
-var proxy = httpProxy.createProxyServer();
+var proxy = httpProxy.createProxyServer({ ws: true });
 const web_o = Object.values(require('http-proxy/lib/http-proxy/passes/web-outgoing'));
-var serveStatic = require('serve-static');
 var serveIndex = require('serve-index');
+
 
 const { createProxyMiddleware } = require('http-proxy-middleware');
 var app = express();
@@ -28,21 +28,6 @@ function override_favicon(req, res) {
             return true;
         }
     }
-}
-
-function _call_proxy(req, res, url) {
-    //console.log(req);
-    if (override_favicon(req, res)) {
-        return;
-    }
-    proxy.web(req, res, {
-        target: url,
-        selfHandleResponse: true,
-        ws: true
-    }, (e) => {
-        console.log(e);
-        res.status(500).end();
-    });
 }
 
 
@@ -93,10 +78,22 @@ app.use("/code", createProxyMiddleware({
     ws: true
 }));
 
+app.use(["/vscode", "/websockify"], createProxyMiddleware({
+    pathRewrite: {
+        '^/vscode/': '/',
+    },
+    ws: true, // Enable WebSocket proxying
+    logLevel: 'debug', // Enable debug logging for troubleshooting
+    changeOrigin: true,
+    target: 'http://novnc_vscode:6080'
+}, (error) => {
+    if (error) {
+        console.error('Proxy error:', error);
+        res.status(500).send('Proxy error');
+    }
+}));
+
 app.use("/logs", createProxyMiddleware({
-    // nginx.conf equivalent:
-    // location ~ ^/logs_socket_io/?(.*)$ {
-    //     rewrite ^/logs_socket_io/?(.*)$ /socket.io/$1 break;
     changeOrigin: true,
     pathRewrite: {
         '^/logs': '/'
@@ -113,31 +110,31 @@ app.use("/logs_socket_io", createProxyMiddleware({
     ws: true
 }));
 
-app.use("/longpolling", createProxyMiddleware({
-    target: 'http://' + process.env.ODOO_HOST + ':8072',
-}));
-app.use("/websocket", createProxyMiddleware({
+app.use(["/longpolling", "/websocket", "/documents/content"], createProxyMiddleware({
     target: 'http://' + process.env.ODOO_HOST + ':8072', ws: true
 }));
 
-// app.use("/console", createProxyMiddleware({
-//     target: 'http://' + process.env.WEBSSH_HOST + ':80',
-//     ws: true,
-// }));
-
-app.use("/documents/content", createProxyMiddleware({
-    target: 'https://' + process.env.ODOO_HOST + ':8072', ws: true
+// TODO if devmode
+app.use("/console", createProxyMiddleware({
+    target: 'http://' + process.env.WEBSSH_HOST + ':80',
+    ws: true,
 }));
 
-app.all("/*", (req, res, next) => {
+app.all("/*", async (req, res, next) => {
     if (options.odoo_tcp_check) {
-        _wait_tcp_conn(server_odoo).then(() => {
-            _call_proxy(req, res, server_odoo);
-        });
+        await _wait_tcp_conn(server_odoo);
     }
-    else {
-        _call_proxy(req, res, server_odoo);
+    if (override_favicon(req, res)) {
+        return;
     }
+    proxy.web(req, res, {
+        target: server_odoo,
+        selfHandleResponse: true,
+        ws: true
+    }, (e) => {
+        console.log(e);
+        res.status(500).end();
+    });
 });
 
 

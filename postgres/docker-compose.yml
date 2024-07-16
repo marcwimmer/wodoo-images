@@ -44,6 +44,6 @@ services:
 
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $DB_USER --dbname=postgres"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+      interval: 1s
+      timeout: 25s
+      retries: 15
