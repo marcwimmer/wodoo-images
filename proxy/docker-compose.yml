@@ -3,6 +3,9 @@ services:
   proxy_abstract:
     build: $ODOO_IMAGES/proxy
     restart: unless-stopped
+    # ports:
+      # - "9228:9228"
+      # - "9995:80"
     networks:
       - default
     volumes:

@@ -2,7 +2,7 @@ var express = require('express');
 var net = require('net');
 var httpProxy = require('http-proxy');
 const path = require('node:path');
-var proxy = httpProxy.createProxyServer({ ws: true });
+var proxy = httpProxy.createProxyServer({ ws: true, logLevel: 'debug', });
 const web_o = Object.values(require('http-proxy/lib/http-proxy/passes/web-outgoing'));
 var serveIndex = require('serve-index');
 
@@ -78,21 +78,6 @@ app.use("/code", createProxyMiddleware({
     ws: true
 }));
 
-app.use(["/vscode", "/websockify"], createProxyMiddleware({
-    pathRewrite: {
-        '^/vscode/': '/',
-    },
-    ws: true, // Enable WebSocket proxying
-    logLevel: 'debug', // Enable debug logging for troubleshooting
-    changeOrigin: true,
-    target: 'http://novnc_vscode:6080'
-}, (error) => {
-    if (error) {
-        console.error('Proxy error:', error);
-        res.status(500).send('Proxy error');
-    }
-}));
-
 app.use("/logs", createProxyMiddleware({
     changeOrigin: true,
     pathRewrite: {
@@ -130,9 +115,10 @@ app.all("/*", async (req, res, next) => {
     proxy.web(req, res, {
         target: server_odoo,
         selfHandleResponse: true,
+        logLevel: 'debug',
         ws: true
     }, (e) => {
-        console.log(e);
+        console.error(e);
         res.status(500).end();
     });
 });
