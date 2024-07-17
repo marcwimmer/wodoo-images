@@ -9,8 +9,8 @@ services:
           - SYS_ADMIN
         restart: "unless-stopped"
         privileged: true
-        ports:
-            - "5900:5900"
+        # ports:
+        #     - "5900:5900"
         volumes:
           - ${CUSTOMS_DIR}:/opt/src
           - ${CUSTOMS_DIR}:${CUSTOMS_DIR}
