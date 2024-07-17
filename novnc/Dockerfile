@@ -1,39 +1,41 @@
-FROM alpine:3.13.5
+FROM ubuntu:24.04
 ARG  relpathname
 
-ENV NOVNC_TAG="v1.3.0"
+ENV NOVNC_TAG="v1.5.0"
 
-ENV WEBSOCKIFY_TAG="v0.10.0"
+ENV WEBSOCKIFY_TAG="v0.12.0"
 
 ENV VNC_SERVER "localhost:5900"
 
-RUN apk --no-cache --update --upgrade add \
+RUN apt update && apt install -y  \
         bash \
         python3 \
         python3-dev \
         gfortran \
-        py-pip \
-        build-base \
+        python3-pip \
+        build-essential \
         procps \
         git \
-        rsync
+        rsync \ 
+        libffi-dev
 
-RUN pip install --no-cache-dir numpy
-
-RUN ln -s /usr/bin/python3 /usr/bin/python
+RUN apt install -y python3-venv
+RUN python3 -mvenv /venv
+RUN /venv/bin/pip install --no-cache-dir numpy
 
 RUN git config --global advice.detachedHead false && \
     git clone https://github.com/novnc/noVNC --branch ${NOVNC_TAG} /root/noVNC && \
-    git clone https://github.com/novnc/websockify --branch ${WEBSOCKIFY_TAG} /root/noVNC/utils/websockify
+    git clone https://github.com/novnc/websockify --branch ${WEBSOCKIFY_TAG} /root/websockify
 
-RUN sed -i "/wait ${proxy_pid}/i if [ -n \"\$AUTOCONNECT\" ]; then sed -i \"s/'autoconnect', false/'autoconnect', '\$AUTOCONNECT'/\" /root/noVNC/app/ui.js; fi" /root/noVNC/utils/novnc_proxy
+#RUN sed -i "/wait ${proxy_pid}/i if [ -n \"\$AUTOCONNECT\" ]; then sed -i \"s/'autoconnect', false/'autoconnect', '\$AUTOCONNECT'/\" /root/noVNC/app/ui.js; fi" /root/noVNC/utils/novnc_proxy
 
-RUN sed -i "/wait ${proxy_pid}/i if [ -n \"\$VNC_PASSWORD\" ]; then sed -i \"s/WebUtil.getConfigVar('password')/'\$VNC_PASSWORD'/\" /root/noVNC/app/ui.js; fi" /root/noVNC/utils/novnc_proxy
+#RUN sed -i "/wait ${proxy_pid}/i if [ -n \"\$VNC_PASSWORD\" ]; then sed -i \"s/WebUtil.getConfigVar('password')/'\$VNC_PASSWORD'/\" /root/noVNC/app/ui.js; fi" /root/noVNC/utils/novnc_proxy
 
-RUN sed -i "/wait ${proxy_pid}/i if [ -n \"\$VIEW_ONLY\" ]; then sed -i \"s/UI.rfb.viewOnly = UI.getSetting('view_only');/UI.rfb.viewOnly = \$VIEW_ONLY;/\" /root/noVNC/app/ui.js; fi" /root/noVNC/utils/novnc_proxy
+#RUN sed -i "/wait ${proxy_pid}/i if [ -n \"\$VIEW_ONLY\" ]; then sed -i \"s/UI.rfb.viewOnly = UI.getSetting('view_only');/UI.rfb.viewOnly = \$VIEW_ONLY;/\" /root/noVNC/app/ui.js; fi" /root/noVNC/utils/novnc_proxy
 
 RUN sed -i "s|\"app|\"/$relpathname/app|g" /root/noVNC/vnc.html
 RUN cp /root/noVNC/vnc.html /root/noVNC/index.html
+
 
 RUN python3 <<EOF
 # make available for sub path
@@ -48,4 +50,6 @@ print(f"copying from {source} to {dest}")
 subprocess.check_call(["rsync", str(source) + "/", str(dest) + "/", "-ar"])
 EOF
 
-ENTRYPOINT [ "bash", "-c", "/root/noVNC/utils/novnc_proxy --vnc ${VNC_SERVER} " ]
+
+WORKDIR /root/websockify
+ENTRYPOINT [ "bash", "-c", ". /venv/bin/activate && ./run --web /root/noVNC --token-plugin TokenFile --token-source $TOKEN_FILE 6080 " ]
