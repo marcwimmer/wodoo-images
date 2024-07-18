@@ -1,24 +1,75 @@
 var express = require('express');
 var net = require('net');
 var httpProxy = require('http-proxy');
-const path = require('node:path');
-var proxy = httpProxy.createProxyServer({ ws: true, logLevel: 'debug', });
-const web_o = Object.values(require('http-proxy/lib/http-proxy/passes/web-outgoing'));
-var serveIndex = require('serve-index');
-
-
 const { createProxyMiddleware } = require('http-proxy-middleware');
+const path = require('node:path');
+var serveIndex = require('serve-index');
 var app = express();
 
-const options = {
-    odoo_tcp_check: true
-};
+const vncvscode = "http://novnc_vscode:6080";
 
 const server_odoo = {
     protocol: 'http',
     host: process.env.ODOO_HOST,
     port: 8069,
 };
+
+const options = {
+    odoo_tcp_check: true
+};
+
+const proxyOdoo = createProxyMiddleware({
+    target: '',
+    router: function (req) {
+        let target = {};
+        Object.assign(target, server_odoo);
+        if (req.url.indexOf("/longpolling") === 0) {
+            target.port = 8072;
+        }
+        else if (req.url.indexOf("/websocket") === 0) {
+            target.port = 8072;
+        }
+        else if (req.url.indexOf("/documents/content") === 0) {
+            target.port = 8072;
+        }
+        else if (req.url.indexOf("/mailer") === 0) {
+            target = 'http://' + process.env.ROUNDCUBE_HOST + ':80';
+        }
+        else if (req.url.indexOf("/vscode") === 0) {
+            // http://server:port/vscode/vnc.html?path=vscode?token=vscode
+            target = vncvscode;
+        }
+        // app.use("/logs", createProxyMiddleware({
+        //     changeOrigin: true,
+        //     pathRewrite: {
+        //         '^/logs': '/'
+        //     },
+        //     target: 'http://' + process.env.LOGS_HOST + ':6688',
+        //     ws: false
+        // }));
+        // app.use("/logs_socket_io", createProxyMiddleware({
+        //     changeOrigin: true,
+        //     pathRewrite: {
+        //         '^/logs_socket_io': '/socket.io'
+        //     },
+        //     target: 'http://' + process.env.LOGS_HOST + ':6688',
+        //     ws: false
+        // }));
+
+        // // TODO if devmode
+        // app.use("/console", createProxyMiddleware({
+        //     target: 'http://' + process.env.WEBSSH_HOST + ':80',
+        //     ws: false,
+        // }));
+
+        return target;
+    },
+    ws: true,
+    logLevel: 'debug',
+    pathRewrite: {}
+}
+);
+
 
 function override_favicon(req, res) {
     if (process.env.DEVMODE === "1") {
@@ -50,81 +101,26 @@ function _wait_tcp_conn(target) {
     });
 }
 
-proxy.on('proxyRes', (proxyRes, req, res) => {
-    //hack: https://github.com/nodejitsu/node-http-proxy/issues/1263
-    //ohne dem geht caldav nicht
-    for (var i = 0; i < web_o.length; i++) {
-        if (web_o[i](req, res, proxyRes, {})) { break; }
-    }
-
-    proxyRes.pipe(res);
-});
-
-proxy.on('error', function (e) {
-    console.debug(e);
-});
 
 app.use(
     "/robot-output",
     express.static("/robot_output"),
     serveIndex("/robot_output", { 'icons': true })
 );
-app.use("/mailer", createProxyMiddleware({
-    target: 'http://' + process.env.ROUNDCUBE_HOST + ':80',
-}));
-
-app.use("/code", createProxyMiddleware({
-    target: 'http://' + process.env.THEIA_HOST + ':80',
-    ws: true
-}));
-
-app.use("/logs", createProxyMiddleware({
-    changeOrigin: true,
-    pathRewrite: {
-        '^/logs': '/'
-    },
-    target: 'http://' + process.env.LOGS_HOST + ':6688',
-    ws: true
-}));
-app.use("/logs_socket_io", createProxyMiddleware({
-    changeOrigin: true,
-    pathRewrite: {
-        '^/logs_socket_io': '/socket.io'
-    },
-    target: 'http://' + process.env.LOGS_HOST + ':6688',
-    ws: true
-}));
-
-app.use(["/longpolling", "/websocket", "/documents/content"], createProxyMiddleware({
-    target: 'http://' + process.env.ODOO_HOST + ':8072', ws: true
-}));
-
-// TODO if devmode
-app.use("/console", createProxyMiddleware({
-    target: 'http://' + process.env.WEBSSH_HOST + ':80',
-    ws: true,
-}));
-
-app.all("/*", async (req, res, next) => {
+app.all("*", async (req, res, next) => {
     if (options.odoo_tcp_check) {
         await _wait_tcp_conn(server_odoo);
     }
     if (override_favicon(req, res)) {
+        console.log("Delivering favicon");
         return;
     }
-    proxy.web(req, res, {
-        target: server_odoo,
-        selfHandleResponse: true,
-        logLevel: 'debug',
-        ws: true
-    }, (e) => {
-        console.error(e);
-        res.status(500).end();
-    });
+    //console.log("proxying " + req.path + " to: " + target);
+    proxyOdoo(req, res, next);
 });
-
 
 var server = app.listen(80, '0.0.0.0', () => {
     console.log('Proxy server listening on 0.0.0.0:80.');
 });
 server.setTimeout(3600 * 100000);
+server.on('upgrade', proxyOdoo);

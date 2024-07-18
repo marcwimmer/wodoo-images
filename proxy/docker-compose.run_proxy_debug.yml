@@ -1,0 +1,4 @@
+services:
+  proxy:
+    ports:
+      - "9228:9228"

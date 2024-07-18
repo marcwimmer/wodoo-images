@@ -71,8 +71,9 @@ class TokenFileName(BasePlugin):
     # contents of file is host:port
     def __init__(self, src):
         super().__init__(src)
+        logger.error("HI")
         if not os.path.isdir(src):
-            raise Exception("TokenFileName plugin requires a directory")
+            raise Exception(f"TokenFileName plugin requires a directory: {src}")
     
     def lookup(self, token):
         token = os.path.basename(token)

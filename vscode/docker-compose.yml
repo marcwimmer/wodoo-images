@@ -34,6 +34,9 @@ services:
         restart: "unless-stopped"
         links:
             - vscode
+        volumes:
+          - ${ODOO_IMAGES}/novnc/websockify:/root/websockify
+          - ${ODOO_IMAGES}/vscode/tokens:/root/tokens
         environment:
           - DISPLAY_WIDTH=${VSCODE_WIDTH}
           - DISPLAY_HEIGHT=${VSCODE_HEIGHT}
@@ -43,3 +46,4 @@ services:
           - RUN_FLUXBOX=yes
           - VNC_SERVER=vscode:5900
           - VIEW_ONLY=false
+          - TOKEN_FILE=/root/tokens
