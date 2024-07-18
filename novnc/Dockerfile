@@ -24,8 +24,7 @@ RUN python3 -mvenv /venv
 RUN /venv/bin/pip install --no-cache-dir numpy
 
 RUN git config --global advice.detachedHead false && \
-    git clone https://github.com/novnc/noVNC --branch ${NOVNC_TAG} /root/noVNC && \
-    git clone https://github.com/novnc/websockify --branch ${WEBSOCKIFY_TAG} /root/websockify
+    git clone https://github.com/novnc/noVNC --branch ${NOVNC_TAG} /root/noVNC
 
 #RUN sed -i "/wait ${proxy_pid}/i if [ -n \"\$AUTOCONNECT\" ]; then sed -i \"s/'autoconnect', false/'autoconnect', '\$AUTOCONNECT'/\" /root/noVNC/app/ui.js; fi" /root/noVNC/utils/novnc_proxy
 
@@ -50,6 +49,6 @@ print(f"copying from {source} to {dest}")
 subprocess.check_call(["rsync", str(source) + "/", str(dest) + "/", "-ar"])
 EOF
 
-
+RUN mkdir /root/websockify
 WORKDIR /root/websockify
-ENTRYPOINT [ "bash", "-c", ". /venv/bin/activate && ./run --web /root/noVNC --token-plugin TokenFile --token-source $TOKEN_FILE 6080 " ]
+ENTRYPOINT [ "bash", "-c", ". /venv/bin/activate && ./run --web /root/noVNC --token-plugin TokenFileName --token-source $TOKEN_FILE 6080 " ]

@@ -1,0 +1,34 @@
+diff --git a/websockify/token_plugins.py b/websockify/token_plugins.py
+index 36a1dbc..45fc808 100644
+--- a/websockify/token_plugins.py
++++ b/websockify/token_plugins.py
+@@ -37,7 +37,7 @@ class ReadOnlyTokenFile(BasePlugin):
+             for line in [l.strip() for l in open(f).readlines()]:
+                 if line and not line.startswith('#'):
+                     try:
+-                        tok, target = re.split(':\s', line)
++                        tok, target = re.split(':', line)
+                         self._targets[tok] = target.strip().rsplit(':', 1)
+                     except ValueError:
+                         logger.error("Syntax error in %s on line %d" % (self.source, index))
+diff --git a/websockify/websocketproxy.py b/websockify/websocketproxy.py
+index b6f103c..ce0c49b 100644
+--- a/websockify/websocketproxy.py
++++ b/websockify/websocketproxy.py
+@@ -158,10 +158,14 @@ Traffic Legend:
+             if 'token' in args and len(args['token']):
+                 token = args['token'][0].rstrip('\n')
+             else:
+-                token = None
++                # PATCH
++                if '?token=' in args['path'][0]:
++                    token = args['path'][0].split("?token=")[1]
++                else:
++                    token = None
+ 
+         if token is None:
+-            raise self.server.EClose("Token not present")
++            raise self.server.EClose(f"Token not present: {args}")
+ 
+         result_pair = target_plugin.lookup(token)
+ 
