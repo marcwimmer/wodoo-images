@@ -39,34 +39,33 @@ const proxyOdoo = createProxyMiddleware({
             // http://server:port/vscode/vnc.html?path=vscode?token=vscode
             target = vncvscode;
         }
+        else if (req.url.indexOf("/logs") === 0 || req.url.indexOf("/logs_socket_io") === 0) {
+            target = 'http://' + process.env.LOGS_HOST + ':6688';
+        }
         // app.use("/logs", createProxyMiddleware({
-        //     changeOrigin: true,
         //     pathRewrite: {
         //         '^/logs': '/'
         //     },
-        //     target: 'http://' + process.env.LOGS_HOST + ':6688',
-        //     ws: false
-        // }));
         // app.use("/logs_socket_io", createProxyMiddleware({
-        //     changeOrigin: true,
         //     pathRewrite: {
         //         '^/logs_socket_io': '/socket.io'
         //     },
-        //     target: 'http://' + process.env.LOGS_HOST + ':6688',
-        //     ws: false
-        // }));
-
-        // // TODO if devmode
-        // app.use("/console", createProxyMiddleware({
-        //     target: 'http://' + process.env.WEBSSH_HOST + ':80',
-        //     ws: false,
-        // }));
+        else if (req.url.indexOf("/console") === 0) {
+            target = 'http://' + process.env.WEBSSH_HOST + ':80';
+        }
 
         return target;
     },
     ws: true,
     logLevel: 'debug',
-    pathRewrite: {}
+    changeOrigin: false,
+    pathRewrite: (path, req) => {
+        console.log(req.url);
+        console.log(req);
+        if (path.indexOf("/logs") === 0) {
+            return path.replace("/logs", "/");
+        }
+    },
 }
 );
 
