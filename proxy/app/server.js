@@ -52,7 +52,7 @@ const proxyOdoo = createProxyMiddleware({
             if (process.env.DEVMODE === "1") {
                 target = 'http://nixda;'
             }
-            target = 'http://' + process.env.WEBSSH_HOST + ':80';
+            target = 'http://' + process.env.WEBSSH_HOST + ':8080';
         }
 
         return target;
@@ -68,6 +68,9 @@ const proxyOdoo = createProxyMiddleware({
         }
         else if (path.indexOf("/logs") === 0) {
             return path.replace("/logs", "");
+        }
+        else if (path.indexOf("/console") === 0) {
+            return path.replace("/console", "/");
         }
     },
     on: {

@@ -1,0 +1,4 @@
+services:
+  webssh:
+    ports:
+      - "4444:8080"
