@@ -42,14 +42,6 @@ const proxyOdoo = createProxyMiddleware({
         else if (req.url.indexOf("/logs") === 0 || req.url.indexOf("/logs_socket_io") === 0) {
             target = 'http://' + process.env.LOGS_HOST + ':6688';
         }
-        // app.use("/logs", createProxyMiddleware({
-        //     pathRewrite: {
-        //         '^/logs': '/'
-        //     },
-        // app.use("/logs_socket_io", createProxyMiddleware({
-        //     pathRewrite: {
-        //         '^/logs_socket_io': '/socket.io'
-        //     },
         else if (req.url.indexOf("/console") === 0) {
             target = 'http://' + process.env.WEBSSH_HOST + ':80';
         }
@@ -62,8 +54,17 @@ const proxyOdoo = createProxyMiddleware({
     pathRewrite: (path, req) => {
         console.log(req.url);
         console.log(req);
-        if (path.indexOf("/logs") === 0) {
-            return path.replace("/logs", "/");
+        if (path.indexOf("/logs_socket_io") === 0) {
+            return path.replace("/logs_socket_io", "/socket.io");
+        }
+        else if (path.indexOf("/logs") === 0) {
+            return path.replace("/logs", "");
+        }
+    },
+    on: {
+        onProxyReq: (proxyReq, req, res) => {
+            debugger;
+            proxyReq.setHeader('X-Forwarded-Path', req.originalUrl);  // Forward the original URL
         }
     },
 }
@@ -100,6 +101,11 @@ function _wait_tcp_conn(target) {
     });
 }
 
+// Start the Express server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
 
 app.use(
     "/robot-output",
