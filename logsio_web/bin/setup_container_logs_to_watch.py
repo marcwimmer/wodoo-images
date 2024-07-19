@@ -16,7 +16,7 @@ config_file = Path(os.environ["LOGIO_FILE_INPUT_CONFIG_PATH"])
 config = json.loads(config_file.read_text())
 config['inputs'] = []
 
-project_name = os.environ['PROJECT_NAME']
+project_name = os.environ['project_name']
 containers = docker.containers.list(all=True, filters={'name': [project_name]})
 for container in containers:
     path = Path(f"/var/lib/docker/containers/{container.id}")

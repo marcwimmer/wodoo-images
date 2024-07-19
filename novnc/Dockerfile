@@ -5,7 +5,7 @@ ENV NOVNC_TAG="v1.5.0"
 
 ENV WEBSOCKIFY_TAG="v0.12.0"
 
-ENV VNC_SERVER "localhost:5900"
+ENV VNC_SERVER="localhost:5900"
 
 RUN apt update && apt install -y  \
         bash \

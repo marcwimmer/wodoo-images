@@ -14,7 +14,7 @@ RUN npm install
 RUN npm update
 RUN npm run build:js
 RUN npm set strict-ssl false
-RUN npm install -g log.io-file-input
+RUN npm install -g log.io-file-input --unsafe-perm
 
 ENV LOGIO_SERVER_CONFIG_PATH=/root/.log.io/server.json
 ENV LOGIO_FILE_INPUT_CONFIG_PATH=/root/.log.io/file_input.json

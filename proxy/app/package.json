@@ -8,11 +8,11 @@
     "start": "node --inspect=0.0.0.0:9228 server.js"
   },
   "dependencies": {
-    "http-proxy": "^1.18.1",
-    "express": "^4.17.1",
+    "axios": "^1.6.0",
     "serve-index": "1.9.1",
-    "express-mung": "0.5.1",
+    "serve-favicon": "2.5.0",
+    "express": "^4.19.2",
     "cookie-parser": "1.4.5",
-    "http-proxy-middleware": "1.0.6"
+    "http-proxy-middleware": "3.0.0"
   }
 }
