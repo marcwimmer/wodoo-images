@@ -32,3 +32,10 @@ repos:
   sha: ad925e1387af63c329ac0e68db7dd92185c20cb6
   type: integrated
   url: https://github.com/NarrativeScience/log.io.git
+- branch: master
+  patches:
+  - webssh/patches
+  path: webssh/webssh
+  sha: 1cf19c71861a0df4dcbad67b6544224bbe616be1
+  type: integrated
+  url: https://github.com/huashengdun/webssh
