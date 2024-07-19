@@ -23,7 +23,11 @@ RUN apt update && DEBIAN_FRONTEND="noninteractive" apt install -y --no-install-r
 RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
 RUN add-apt-repository "deb [arch=$(dpkg --print-architecture)] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
 RUN apt-get update && apt-get install -y docker-ce docker-ce-cli containerd.io
-RUN pip install pip --upgrade && pip install webssh
+RUN pip install pip --upgrade 
+# RUN pip install webssh
+COPY webssh /root/webssh
+RUN pip install -e /root/webssh
+
 
 RUN docker --version
 
@@ -57,3 +61,7 @@ echo 'export PATH' >> /root/.bash_profile && \
 chmod a+x /root/programs/*  && \
 chsh -s /usr/bin/rbash && \
 ln -s /usr/bin/ssh /root/programs/ssh
+
+
+# TODO remove to allow password login
+RUN chpasswd -d root
