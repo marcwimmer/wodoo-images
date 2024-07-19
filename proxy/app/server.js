@@ -36,13 +36,22 @@ const proxyOdoo = createProxyMiddleware({
             target = 'http://' + process.env.ROUNDCUBE_HOST + ':80';
         }
         else if (req.url.indexOf("/vscode") === 0) {
+            if (process.env.DEVMODE === "1") {
+                target = 'http://nixda;'
+            }
             // http://server:port/vscode/vnc.html?path=vscode?token=vscode
             target = vncvscode;
         }
         else if (req.url.indexOf("/logs") === 0 || req.url.indexOf("/logs_socket_io") === 0) {
+            if (process.env.DEVMODE === "1") {
+                target = 'http://nixda;'
+            }
             target = 'http://' + process.env.LOGS_HOST + ':6688';
         }
         else if (req.url.indexOf("/console") === 0) {
+            if (process.env.DEVMODE === "1") {
+                target = 'http://nixda;'
+            }
             target = 'http://' + process.env.WEBSSH_HOST + ':80';
         }
 
