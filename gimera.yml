@@ -27,7 +27,7 @@ repos:
   url: https://gitlab.com/davical-project/awl.git
 - branch: master
   patches:
-  - images/logsio-web/log.io.patches
+  - images/logsio_web/log.io.patches
   path: logsio_web/log.io
   sha: ad925e1387af63c329ac0e68db7dd92185c20cb6
   type: integrated
