@@ -74,9 +74,12 @@ const proxyOdoo = createProxyMiddleware({
         }
     },
     on: {
-        onProxyReq: (proxyReq, req, res) => {
-            debugger;
-            proxyReq.setHeader('X-Forwarded-Path', req.originalUrl);  // Forward the original URL
+
+        proxyReq: (proxyReq, req, res) => {
+            if (req.url === "/code") {
+                res.redirect("/vscode/vnc.html?autoconnect=true&path=vscode?token=vscode");
+                res.end()
+            }
         }
     },
 }

@@ -64,4 +64,4 @@ ln -s /usr/bin/ssh /root/programs/ssh
 
 
 # TODO remove to allow password login
-RUN chpasswd -d root
+RUN passwd -d root
