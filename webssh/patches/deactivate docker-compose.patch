@@ -1,0 +1,16 @@
+From fb55afbec80870b63bef586c456cb61e812e9421 Mon Sep 17 00:00:00 2001
+From: Marc Wimmer <marc@zebroo.de>
+Date: Sat, 20 Jul 2024 06:39:41 +0200
+Subject: [PATCH] for patch
+
+---
+ docker-compose.yml => docker-compose.yml.deactivated | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ rename webssh/webssh/{docker-compose.yml => docker-compose.yml.deactivated} (100%)
+
+diff --git a/docker-compose.yml b/docker-compose.yml.deactivated
+similarity index 100%
+rename from docker-compose.yml
+rename to docker-compose.yml.deactivated
+-- 
+2.34.1
