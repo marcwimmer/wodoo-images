@@ -61,7 +61,3 @@ echo 'export PATH' >> /root/.bash_profile && \
 chmod a+x /root/programs/*  && \
 chsh -s /usr/bin/rbash && \
 ln -s /usr/bin/ssh /root/programs/ssh
-
-
-# TODO remove to allow password login
-RUN passwd -d root

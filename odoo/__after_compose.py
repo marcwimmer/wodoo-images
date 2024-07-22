@@ -268,6 +268,9 @@ def _get_dependencies(config, globals, PYTHON_VERSION, exclude=None):
 
     if not exclude:
         append_odoo_requirements(config, external_dependencies, tools)
+        external_dependencies["pip"] = Modules.resolve_pydeps(
+            external_dependencies["pip"]
+        )
 
     arr2 = []
     for libpy in external_dependencies["pip"]:
@@ -319,12 +322,12 @@ def append_odoo_requirements(config, external_dependencies, tools):
     for libpy in requirements_odoo.read_text().splitlines():
         libpy = libpy.strip()
 
-        if ";" in libpy or tools._extract_python_libname(libpy) not in (
-            tools._extract_python_libname(x)
-            for x in external_dependencies.get("pip", [])
-        ):
-            # gevent is special; it has sys_platform set - several lines;
-            external_dependencies["pip"].append(libpy)
+        # if ";" in libpy or tools._extract_python_libname(libpy) not in (
+        #     tools._extract_python_libname(x)
+        #     for x in external_dependencies.get("pip", [])
+        # ):
+        # gevent is special; it has sys_platform set - several lines;
+        external_dependencies["pip"].append(libpy)
 
 
 def _determine_odoo_configuration(config, yml, PYTHON_VERSION, settings, globals):
@@ -365,11 +368,13 @@ def _apply_fluentd_logging(config, yml, settings, globals):
         tag = tag.replace("__SERVICE__", odoo_machine)
         service["logging"]["options"]["tag"] = tag
 
+
 def _filter_framework_requirements(reqs):
     # Prob: lxml splitted away html clean
     # As lxml is always coming with odoo we dont touch the version here
     def _f(line):
-        if 'lxml' in line:
+        if "lxml" in line:
             return False
         return True
-    return '\n'.join(filter(_f, reqs.splitlines()))
+
+    return "\n".join(filter(_f, reqs.splitlines()))
