@@ -249,7 +249,7 @@ def _get_dependencies(config, globals, PYTHON_VERSION, exclude=None):
     modules = list(sorted(set(modules) | set(MINIMAL_MODULES or [])))
     if exclude:
         modules = [x for x in modules if not_excluded(x)]
-    external_dependencies = Modules.get_all_external_dependencies(modules)
+    external_dependencies = Modules.get_all_external_dependencies(modules, PYTHON_VERSION)
     if external_dependencies:
         for key in sorted(external_dependencies):
             if not external_dependencies[key]:
@@ -269,7 +269,7 @@ def _get_dependencies(config, globals, PYTHON_VERSION, exclude=None):
     if not exclude:
         append_odoo_requirements(config, external_dependencies, tools)
         external_dependencies["pip"] = Modules.resolve_pydeps(
-            external_dependencies["pip"]
+            external_dependencies["pip"], PYTHON_VERSION
         )
 
     arr2 = []
