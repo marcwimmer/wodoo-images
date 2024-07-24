@@ -52,13 +52,13 @@ const proxyOdoo = createProxyMiddleware({
             if (process.env.DEVMODE === "1") {
                 target = 'http://nixda;'
             }
-            target = 'http://' + process.env.WEBSSH_HOST + ':8080';
+            target = process.env.WEBSSH_HOST;
         }
 
         return target;
     },
     ws: true,
-    logLevel: 'debug',
+    //logLevel: 'debug',
     changeOrigin: false,
     pathRewrite: (path, req) => {
         console.log(req.url);

@@ -14,4 +14,5 @@ services:
       - $ODOO_IMAGES/proxy/app/server.js:/usr/src/app/server.js
       - ${CUSTOMS_DIR}:/usr/src/app/odoo
       - ${HOST_RUN_DIR}/odoo_outdir/robot_output:/robot_output
+      - ${HOST_RUN_DIR}/proxy_logs:/root/.npm/_logs
 

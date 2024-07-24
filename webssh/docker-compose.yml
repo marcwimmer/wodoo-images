@@ -9,4 +9,4 @@ services:
       - ${ODOO_IMAGES}/webssh/programs/pgcli:/root/programs/pgcli
   proxy:
     environment:
-      WEBSSH_HOST: webssh
+      WEBSSH_HOST: http://webssh:8080
