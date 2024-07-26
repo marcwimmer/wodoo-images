@@ -43,10 +43,5 @@ def after_settings(settings, config):
     settings.write()
 
     # replace any env variable
-    if settings.get("ODOO_QUEUEJOBS_CHANNELS", ""):
-        Path(config.files["queuejob_channels_file"]).write_text(
-            settings["ODOO_QUEUEJOBS_CHANNELS"]
-        )
-
     if settings["LOCAL_SETTINGS"] == "1":
         settings["ODOO_FILES"] = str(Path(settings["HOST_RUN_DIR"]) / "files")
