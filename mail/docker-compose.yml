@@ -7,6 +7,8 @@ volumes:
 services:
   mail:
     build: $ODOO_IMAGES/mail
+    profiles:
+      - auto
     volumes:
       - mailstorage:/home/postmaster/Maildir
       - mailsqlite:/rc
@@ -16,5 +18,7 @@ services:
     build: $ODOO_IMAGES/roundcube
     #ports:
     #    - "127.0.0.1:8282:80"
+    profiles:
+      - auto
     environment:
       MAIL_SERVER: ${project_name}_mail

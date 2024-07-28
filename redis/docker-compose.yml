@@ -5,5 +5,7 @@ volumes:
 services:
   redis:
     image: redis
+    profiles:
+      - auto
     volumes: 
       - redis_persistent_data:/data
