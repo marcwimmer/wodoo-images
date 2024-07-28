@@ -173,7 +173,8 @@ RUN apt update && apt-get install \
             pdftk \
             python3-gi \
             python3-click \
-            locales
+            locales \
+            postgresql-client 
 
 RUN locale-gen en_US.UTF-8 && dpkg-reconfigure locales
 
