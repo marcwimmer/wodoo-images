@@ -1,5 +1,28 @@
 #!/bin/bash
-if [[ "$DEVMODE" == "1" ]]; then
+set -x
+if [[ "$DEVMODE" != "1" ]]; then
+	echo "DEVMODE is not set"
+	exit 0
+fi
+
+GIT_USERNAME="$1"
+GIT_EMAIL="$2"
+REPO_URL="$3"
+REPO_AUTH_TYPE="$4"
+REPO_KEY="$5"
+USER_HOME=$(eval echo ~$USERNAME)
+SSHDIR="$USER_HOME/.ssh"
+
+if [[ -z "$GIT_USERNAME" ]]; then
+	echo "Need git username"
+	exit -1
+fi
+if [[ -z "$REPO_URL" ]]; then
+	echo "Need git repo url"
+	exit -1
+fi
+
+
 DISPLAY=:0.0
 export DISPLAY
 
@@ -19,7 +42,6 @@ if [[ -e "$TEMP_XAUTH" ]]; then
 fi
 [[ -f $USER_HOME/.Xauthority ]] && rm $USER_HOME/.Xauthority
 xauth -f $TEMP_XAUTH add $DISPLAY . $COOKIE
-USER_HOME=$(eval echo ~$USERNAME)
 mv $TEMP_XAUTH $USER_HOME/.Xauthority
 chown $USERNAME:$USERNAME $USER_HOME/.Xauthority
 cp $USER_HOME/.Xauthority /root/.Xauthority
@@ -42,13 +64,29 @@ echo "export CUSTOMS_DIR=$CUSTOMS_DIR" >> /tmp/envvars.sh
 echo "alias odoo=\"$USER_HOME/.local/bin/odoo --project-name=$project_name\"" >> $USER_HOME/.bash_aliases
 
 # gosu $USERNAME xeyes
-STARTUPFILE_FLUXBOX=/home/user1/.fluxbox/startup
+STARTUPFILE_FLUXBOX="$USER_HOME/.fluxbox/startup"
 echo '#!/bin/bash' > $STARTUPFILE_FLUXBOX
 echo 'sleep 5' >> $STARTUPFILE_FLUXBOX
 echo "DISPLAY=$DISPLAY /usr/bin/code-insiders /opt/src &" >> $STARTUPFILE_FLUXBOX
 chown $USERNAME:$USERNAME $STARTUPFILE_FLUXBOX
 chmod a+x $STARTUPFILE_FLUXBOX
 gosu $USERNAME fluxbox &
+
+chown $USERNAME:$USERNAME /home/user1/.odoo -R
+
+# set git user and repo
+cd /opt/src
+git config --global user.email "$GIT_EMAIL"
+git config --global user.name "$GIT_USERNAME"
+git remote set-url origin "$REPO_URL"
+mkdir -p "$USER_HOME/.ssh"
+echo "$REPO_KEY" | base64 -d >> "$SSHDIR/id_rsa"
+chown $USERNAME:$USERNAME  "$SSHDIR" -R
+chmod 500 "$SSHDIR" 
+chmod 400 "$SSHDIR/id_rsa"
+
+
+echo "Git user is $GIT_USERNAME"
 
 line="DISPLAY=$DISPLAY /usr/bin/code-insiders /opt/src"
 gosu $USERNAME bash -c "$line"
@@ -57,4 +95,3 @@ WINDOW_ID=$(DISPLAY="$DISPLAY" xdotool getactivewindow)
 xdotool windowactivate --sync $WINDOW_ID key --clearmodifiers alt+F10
 
 sleep infinity
-fi

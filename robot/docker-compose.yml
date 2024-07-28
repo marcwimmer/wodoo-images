@@ -10,6 +10,8 @@ services:
             OUTPUT_DIR: /opt/output
             OWNER_UID: ${OWNER_UID}
             ODOO_HOME: /opt/src
+        profiles:
+          - auto
         extra_hosts:
             - "host.docker.internal:host-gateway"
         volumes:

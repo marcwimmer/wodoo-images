@@ -4,6 +4,8 @@ services:
     #     restart: "unless-stopped"
     #     ports: 
     #       - "0.0.0.0:6080:6080"
+    #     profiles:
+    #       - manual
     #     environment:
     #       - DISPLAY_WIDTH=1024
     #       - DISPLAY_HEIGHT=768

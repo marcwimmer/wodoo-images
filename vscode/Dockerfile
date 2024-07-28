@@ -22,7 +22,6 @@ RUN curl  -L -o /tmp/vscode.deb "$(cat /tmp/downloadlink)"
 
 RUN apt install -y /tmp/vscode.deb
 RUN apt update && apt upgrade -y
-ENTRYPOINT /bin/bash /entrypoint.sh
 ADD welcome.txt /root/welcome.txt
 
 ENV USERNAME=user1
@@ -88,3 +87,4 @@ RUN ~/.local/bin/odoo completion -x
 RUN ~/.local/bin/gimera completion -x
 
 USER root
+ENTRYPOINT ["/bin/bash",  "/entrypoint.sh"]

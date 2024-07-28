@@ -7,6 +7,8 @@ services:
     volumes:
       - $HOST_RUN_DIR:/opt/hostrundir
     entrypoint: ["/bin/sh","-c"]
+    profiles:
+      - auto
     command:
       - |
         mkdir -p /opt/hostrundir/postgres.socket
@@ -20,6 +22,8 @@ services:
     stdin_open: true
     command: ["postgres"]
     entrypoint: ["/run.sh"]
+    profiles:
+      - auto
 
     depends_on:
       - postgres_change_permissions

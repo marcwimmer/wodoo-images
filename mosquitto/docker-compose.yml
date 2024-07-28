@@ -9,6 +9,8 @@ services:
   # public mail server can receive mails
   mosquitto:
     build: $ODOO_IMAGES/mosquitto
+    profiles:
+      - auto
     volumes:
         - $ODOO_IMAGES/mosquitto/config:/mosquitto/config
         - mosquitto_logs:/mosquitto/logs
