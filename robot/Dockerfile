@@ -39,10 +39,10 @@ python3-pip python3-magic libmagickwand-dev xvfb \
 sudo curl software-properties-common pipx
 
 COPY ./requirements.txt /tmp/requirements.txt
-RUN python3 -mpip install pip -U && \
-python3 -mpip install setuptools -U && \
-python3 -mpip install --no-cache-dir -r /tmp/requirements.txt && \
-rm -rf /tmp/requirements.txt
+RUN python3 -mpip install pip -U
+RUN python3 -mpip install setuptools
+RUN python3 -mpip install --no-cache-dir -r /tmp/requirements.txt
+RUN rm -rf /tmp/requirements.txt
 
 # Download and install Firefox
 RUN add-apt-repository ppa:mozillateam/ppa && \
