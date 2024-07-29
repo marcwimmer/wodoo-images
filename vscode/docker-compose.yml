@@ -7,6 +7,7 @@ services:
         cap_add:
           # required by vscode
           - SYS_ADMIN
+        shm_size: 4gb
         restart: "unless-stopped"
         privileged: true
         # ports:
