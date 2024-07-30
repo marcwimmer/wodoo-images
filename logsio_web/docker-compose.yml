@@ -19,3 +19,5 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - /var/lib/docker:/var/lib/docker
     privileged: true
+    profiles:
+      - auto

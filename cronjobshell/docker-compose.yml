@@ -8,6 +8,8 @@ services:
         WODOO_VERSION: $WODOO_VERSION
         # Dont do: if images used, then not compatible
         # OWNER_UID: $OWNER_UID
+    profiles:
+      - auto
     privileged: true
     restart: "unless-stopped"
     command: ['sleep']
