@@ -1,4 +1,4 @@
-FROM ubuntu:22.04 as build_gecko
+FROM ubuntu:24.04 AS build_gecko
 ARG WODOO_VERSION
 LABEL authors=Mozilla,jamesmortensen
 
@@ -119,5 +119,5 @@ COPY robotest.py ./
 COPY entrypoint.sh ./
 RUN chmod a+x entrypoint.sh
 USER root
-ENTRYPOINT /opt/robot/entrypoint.sh
+ENTRYPOINT ["/opt/robot/entrypoint.sh"]
 
