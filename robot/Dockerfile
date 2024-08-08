@@ -6,7 +6,7 @@ LABEL authors=Mozilla,jamesmortensen
 # local/geckodriver-arm-builder
 #=========
 
-ENV GECKODRIVER_VERSION=0.33.0
+ENV GECKODRIVER_VERSION=0.35.0
 USER root
 
 
