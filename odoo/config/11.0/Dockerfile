@@ -12,25 +12,25 @@ ADD etc/apt/apt.conf.d/99fixbadproxy /etc/apt/apt.conf.d/99fixbadproxy
 ENV LANG C.UTF-8
 RUN apt update --fix-missing && \
 apt-get install \
-	-y \
-	--no-install-recommends \
-			software-properties-common \
-			man \
+        -y \
+        --no-install-recommends \
+                        software-properties-common \
+                        man \
             cmake \
             ctags \
-			build-essential \
+                        build-essential \
             libtool \
             htop \
             ca-certificates \
             curl \
             node-less \
-			node-clean-css \
-			libpq-dev \
-			libjpeg-dev \
+                        node-clean-css \
+                        libpq-dev \
+                        libjpeg-dev \
             libcurl3-dev \
-			libxml2-dev \
-			libxslt1-dev \
-			libffi-dev \
+                        libxml2-dev \
+                        libxslt1-dev \
+                        libffi-dev \
             tmux \
             libfreetype6-dev \
             libpng-dev \
@@ -58,8 +58,8 @@ apt-get install \
             less \
             freetds-dev \
             libsasl2-dev \
-			libldap2-dev \
-			libssl-dev \
+                        libldap2-dev \
+                        libssl-dev \
             wget \
             cifs-utils \
             imagemagick \
@@ -67,7 +67,7 @@ apt-get install \
             libreoffice \
             libcairo2 libpango1.0-0 libgdk-pixbuf2.0-0 libffi-dev shared-mime-info \
             locales \
-			libmagickwand-dev \
+                        libmagickwand-dev \
             ffmpeg \
             zip \
             gpg-agent \
@@ -135,8 +135,8 @@ ADD config/$ODOO_VERSION/requirements.txt /root/requirements.txt
 #pip3 10.0 is in other directories; hash -r clears the cache of the path
 RUN pip3 install wheel
 RUN hash -r && \
-	pip3 install --upgrade pip && \
-	hash -r && \
+        pip3 install --upgrade pip && \
+        hash -r && \
     pip3 install cython==0.29.35
 RUN pip3 install 'setuptools<58.0'
 RUN pip3 install psycopg2 pyinotify python-magic wand pycups pudb numpy
@@ -164,5 +164,4 @@ echo 'export PATH=$PATH:/usr/local/bin/pipxbin' >> /root/.bashrc
 
 
 RUN apt update && apt install -y libodbc1 unixodbc-dev unixodbc
-RUN pip3 install requests-oauth2client faker requests_oauthlib pyyaml
-RUN pip3 install lxml==4.8.0
+RUN pip3 install requests-oauth2client faker requests_oauthlib pyyamlr
