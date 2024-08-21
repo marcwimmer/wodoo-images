@@ -82,7 +82,7 @@ RUN python3 -m venv --copies /opt/venv
 
 RUN pip3 install wheel && \
 pip3 install pip -U && \
-pip3 install setuptools==57.5.0 -U && \
+pip3 install setuptools -U && \
 pip3 install cython==0.29.35
 
 RUN echo "$ODOO_REQUIREMENTS"  | base64 --decode > /root/pip_requirements.txt
