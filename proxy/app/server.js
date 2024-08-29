@@ -58,7 +58,7 @@ const proxyOdoo = createProxyMiddleware({
         return target;
     },
     ws: true,
-    //logLevel: 'debug',
+    logLevel: 'error',
     changeOrigin: false,
     pathRewrite: (path, req) => {
         console.log(req.url);
