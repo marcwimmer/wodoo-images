@@ -172,8 +172,6 @@ def backup(
         )
         if dumptype != "plain":
             cmd += f"-Z{compression} " f"-j {worker} "
-        else:
-            cmd += f" --no-drop "
         cmd += f" {dbname} " f"2>{err_dump} " f"| pv -s {bytes} "
         if pigz:
             cmd += "| pigz --rsyncable 2>{err_pigz}"
