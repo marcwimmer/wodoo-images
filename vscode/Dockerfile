@@ -88,3 +88,12 @@ RUN ~/.local/bin/gimera completion -x
 
 USER root
 ENTRYPOINT ["/bin/bash",  "/entrypoint.sh"]
+
+RUN apt install -y chromium-browser
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Update the package list and install necessary dependencies
+RUN apt install -y wget
+RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+RUN dpkg -i google-chrome-stable_current_amd64.deb || true
+RUN apt install -y -f

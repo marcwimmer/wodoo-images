@@ -13,14 +13,14 @@ REPO_KEY="$5"
 USER_HOME=$(eval echo ~$USERNAME)
 SSHDIR="$USER_HOME/.ssh"
 
-if [[ -z "$GIT_USERNAME" ]]; then
-	echo "Need git username"
-	exit -1
-fi
-if [[ -z "$REPO_URL" ]]; then
-	echo "Need git repo url"
-	exit -1
-fi
+# if [[ -z "$GIT_USERNAME" ]]; then
+# 	echo "Need git username"
+# 	exit -1
+# fi
+# if [[ -z "$REPO_URL" ]]; then
+# 	echo "Need git repo url"
+# 	exit -1
+# fi
 
 
 DISPLAY=:0.0
@@ -76,14 +76,22 @@ chown $USERNAME:$USERNAME /home/user1/.odoo -R
 
 # set git user and repo
 cd /opt/src
-git config --global user.email "$GIT_EMAIL"
-git config --global user.name "$GIT_USERNAME"
-git remote set-url origin "$REPO_URL"
-mkdir -p "$USER_HOME/.ssh"
-echo "$REPO_KEY" | base64 -d >> "$SSHDIR/id_rsa"
-chown $USERNAME:$USERNAME  "$SSHDIR" -R
-chmod 500 "$SSHDIR" 
-chmod 400 "$SSHDIR/id_rsa"
+if [[ ! -z "$GIT_USERNAME" && ! -z "$GIT_EMAIL" ]]; then
+	git config --global user.email "$GIT_EMAIL"
+	git config --global user.name "$GIT_USERNAME"
+fi
+if [[ ! -z "$REPO_URL" ]]; then
+	git remote set-url origin "$REPO_URL"
+fi
+if [[ ! -z "$USER_HOME" && ! -z "$REPO_KEY" ]]; then
+	mkdir -p "$USER_HOME/.ssh"
+	echo "$REPO_KEY" | base64 -d >> "$SSHDIR/id_rsa"
+	chown $USERNAME:$USERNAME  "$SSHDIR" -R
+fi
+if [[ ! -z "$SSH_DIR" ]]; then
+	chmod 500 "$SSHDIR" 
+	chmod 400 "$SSHDIR/id_rsa"
+fi
 
 
 echo "Git user is $GIT_USERNAME"
