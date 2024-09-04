@@ -6,4 +6,4 @@ workers = __ODOO_WORKERS_WEB__
 http_enable = True
 
 [queue_job]
-channels = root:1
+channels = __ODOO_QUEUEJOBS_CHANNELS__
