@@ -89,7 +89,6 @@ RUN ~/.local/bin/gimera completion -x
 USER root
 ENTRYPOINT ["/bin/bash",  "/entrypoint.sh"]
 
-RUN apt install -y chromium-browser
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Update the package list and install necessary dependencies
