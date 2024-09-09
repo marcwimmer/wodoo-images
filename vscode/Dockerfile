@@ -59,11 +59,10 @@ RUN chown -R $USERNAME:$USERNAME /home/$USERNAME
 
 USER $USERNAME
 # ADD some extensions here
-RUN \
-/usr/bin/code-insiders --install-extension ms-python.python && \
-/usr/bin/code-insiders --install-extension robocorp.robotframework-lsp && \
-/usr/bin/code-insiders --install-extension vscodevim.vim && \
-/usr/bin/code-insiders --install-extension MarcWimmerITE.odoobrowserITE
+RUN  /usr/bin/code-insiders --install-extension ms-python.python || true
+RUN /usr/bin/code-insiders --install-extension robocorp.robotframework-lsp || true
+RUN /usr/bin/code-insiders --install-extension vscodevim.vim || true
+RUN /usr/bin/code-insiders --install-extension MarcWimmerITE.odoobrowserITE || true
 
 USER root
 
