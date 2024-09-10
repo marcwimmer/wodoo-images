@@ -61,8 +61,6 @@ const proxyOdoo = createProxyMiddleware({
     logLevel: 'error',
     changeOrigin: false,
     pathRewrite: (path, req) => {
-        console.log(req.url);
-        console.log(req);
         if (path.indexOf("/logs_socket_io") === 0) {
             return path.replace("/logs_socket_io", "/socket.io");
         }
@@ -132,10 +130,8 @@ app.all("*", async (req, res, next) => {
         await _wait_tcp_conn(server_odoo);
     }
     if (override_favicon(req, res)) {
-        console.log("Delivering favicon");
         return;
     }
-    //console.log("proxying " + req.path + " to: " + target);
     proxyOdoo(req, res, next);
 });
 

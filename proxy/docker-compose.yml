@@ -4,8 +4,8 @@ services:
     build: $ODOO_IMAGES/proxy
     restart: unless-stopped
     # ports:
-      # - "9228:9228"
-      # - "9995:80"
+    # - "9228:9228"
+    # - "9995:80"
     profiles:
       - auto
     networks:
@@ -18,3 +18,8 @@ services:
       - ${HOST_RUN_DIR}/odoo_outdir/robot_output:/robot_output
       - ${HOST_RUN_DIR}/proxy_logs:/root/.npm/_logs
 
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
