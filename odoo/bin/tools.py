@@ -307,6 +307,9 @@ def get_odoo_bin(for_shell=False):
                 CONFIG = "config_web_and_cron"
 
     EXEC = "/".join([os.environ["SERVER_DIR"], EXEC])
+    if not Path(EXEC).exists() and Path(EXEC).parent.exists():
+        # project where they had the installed version of odoo
+        EXEC = Path(EXEC).parent.parent / Path(EXEC).name
     return EXEC, CONFIG
 
 
