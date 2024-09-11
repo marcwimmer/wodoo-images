@@ -134,6 +134,7 @@ def _filter_pip(packages, config):
 
 
 def _determine_requirements(config, yml, PYTHON_VERSION, settings, globals):
+    from wodoo.odoo_config import customs_dir
     if float(config.ODOO_VERSION) < 13.0:
         return
 
@@ -148,6 +149,12 @@ def _determine_requirements(config, yml, PYTHON_VERSION, settings, globals):
         PYTHON_VERSION,
         exclude=("odoo", "enterprise"),
     )
+    # add static requirements:
+    static_reqs = customs_dir() / "requirements.static"
+    if static_reqs.exists():
+        static_reqs = static_reqs.read_text().splitlines()
+        external_dependencies['pip'] += static_reqs
+        external_dependencies_justaddons['pip'] += static_reqs
 
     store_sha_of_external_deps(config, external_dependencies)
 
