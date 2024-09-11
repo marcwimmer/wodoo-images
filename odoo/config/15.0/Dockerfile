@@ -104,9 +104,6 @@ RUN pip3 install -r /root/pip_requirements.txt --force --force-reinstall --ignor
 
 RUN pip3 install pudb ipython debugpy
 
-ADD patches/python_3.8.email.patch /usr/local/src
-RUN bash /usr/local/src/python_3.8.email.patch
-
 # Openupgradelib
 RUN apt install -y git
 RUN git clone https://github.com/OCA/openupgradelib /opt/openupgradelib
