@@ -44,6 +44,7 @@ COPY requirements.txt requirements.txt
 RUN python3 -mpip install -r requirements.txt
 
 RUN pipx install wodoo==$WODOO_VERSION
+RUN apt install -y tmux
 
 ADD entrypoint.sh /entrypoint.sh
 RUN chmod a+x /entrypoint.sh

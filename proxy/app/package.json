@@ -8,11 +8,13 @@
     "start": "node --inspect=0.0.0.0:9228 server.js"
   },
   "dependencies": {
-    "axios": "^1.7.2",
-    "serve-index": "1.9.1",
+    "fastify": "^4.16.0",
+    "@fastify/cookie": "9.4.0",
+    "@fastify/http-proxy": "9.5.0",
+    "@fastify/static": "7.0.4",
+    "@fastify/send": "3.1.0",
+    "axios": "^1.6.0",
     "serve-favicon": "2.5.0",
-    "express": "^4.19.2",
-    "cookie-parser": "1.4.5",
-    "http-proxy-middleware": "3.0.0"
+    "cookie-parser": "1.4.5"
   }
 }
