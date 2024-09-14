@@ -1,10 +1,9 @@
 const Fastify = require('fastify');
 const path = require('node:path');
 const cookie = require('@fastify/cookie');
-const fastify = Fastify({ logger: true });
+const fastify = Fastify({ logger: process.env.FASTIFY_DEBUG === "1" });
 const fastifyStatic = require('@fastify/static')
 const send = require('@fastify/send')
-const axios = require("axios");
 const net = require("net");
 
 
@@ -17,9 +16,8 @@ const server_odoo = {
     longpolling_port: 8072,
 };
 
-// TODO
 const options = {
-    odoo_tcp_check: false
+    odoo_tcp_check: true
 };
 
 const path_icon = path.join(__dirname, 'favicon.ico');
@@ -111,11 +109,8 @@ if (process.env.RUN_WEBSSH === "1") {
         preHandler: (req, res, next) => {
             debugger;
             res.send("HALLO");
-            //?hostname=10.0.3.1&fontsize=10&username=cicd_min&password=ZjdmZjVmZjg4ZTMwODRkMTk5MmIzYTdjNGRmM2Q3ZDI=&command=start_tmux%20%27cicd_tmux_session_cicd_cicd_test_odoo_test1_shellshell%27%20%27cicd_cicd-test-odoo_test1%27%20%27/home/cicd/workspace%27%20%27%27
             // TODO
-            // if (options.odoo_tcp_check) {
-            //     await _wait_tcp_conn(server_odoo);
-            // }
+            //?hostname=10.0.3.1&fontsize=10&username=cicd_min&password=ZjdmZjVmZjg4ZTMwODRkMTk5MmIzYTdjNGRmM2Q3ZDI=&command=start_tmux%20%27cicd_tmux_session_cicd_cicd_test_odoo_test1_shellshell%27%20%27cicd_cicd-test-odoo_test1%27%20%27/home/cicd/workspace%27%20%27%27
             next();
         },
     });
@@ -153,14 +148,33 @@ fastify.register(require('@fastify/http-proxy'), {
             return headers;
         }
     },
-    preHandler: (req, res, next) => {
-        debugger;
-        // TODO
-        // if (options.odoo_tcp_check) {
-        //     await _wait_tcp_conn(server_odoo);
-        // }
+    preHandler: async (req, res, next) => {
+        if (options.odoo_tcp_check) {
+            await _wait_tcp_conn(server_odoo);
+        }
         next();
     },
+});
+
+fastify.setErrorHandler((error, request, reply) => {
+    // Log the error if needed
+    fastify.log.error(error);
+
+    // Set response type to HTML
+    reply.type('text/html');
+
+    // Send a custom HTML error page
+    reply.status(500).send(`
+        <html>
+            <head><title>Server Error</title></head>
+            <body>
+            <h1>500 - Internal Server Error</h1>
+            <p>Oops! Something went wrong on our end.</p>
+            <p>Click here to return back to the cicd application.</p>
+            <p>Error Details: ${error.message}</p>
+            </body>
+        </html>
+    `);
 });
 
 fastify.listen({ port: 80, host: '0.0.0.0' }, (err, address) => {
