@@ -143,6 +143,9 @@ fastify.register(require('@fastify/http-proxy'), {
     upstream: `${server_odoo.protocol}://${server_odoo.host}:${server_odoo.port}`,
     prefix: '/',
     replyOptions: {
+        undici: {
+            timeout: 3600 * 1000,
+        },
         rewriteRequestHeaders: (originalReq, headers) => {
             headers.host = originalReq.headers.host; // equivalent to sameOrigin
             return headers;
