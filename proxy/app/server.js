@@ -59,10 +59,12 @@ fastify.register(require('@fastify/http-proxy'), {
     upstream: `http://${server_odoo.host}:${server_odoo.longpolling_port}`,
     ws: true,
     prefix: '/websocket',
+    rewritePrefix: '/websocket',
 });
 fastify.register(require('@fastify/http-proxy'), {
     upstream: `http://${server_odoo.host}:${server_odoo.longpolling_port}`,
     prefix: '/longpolling',
+    rewritePrefix: '/longpolling',
 });
 if (process.env.DEVMODE === "1") {
     fastify.register(require('@fastify/http-proxy'), {
