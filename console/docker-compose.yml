@@ -1,7 +1,7 @@
 services:
   console:
     build:
-      context: $ODOO_IMAGES/cronjobs
+      context: $ODOO_IMAGES/console
       args:
         WODOO_VERSION: $WODOO_VERSION
         # Dont do: if images used, then not compatible

@@ -11,7 +11,7 @@ services:
             OWNER_UID: ${OWNER_UID}
             ODOO_HOME: /opt/src
         profiles:
-          - auto
+            - auto
         extra_hosts:
             - "host.docker.internal:host-gateway"
         volumes:
@@ -26,3 +26,27 @@ services:
             - "${ODOO_IMAGES}:$ODOO_IMAGES"
             - /var/run/docker.sock:/var/run/docker.sock
             - /var/lib/docker:/var/lib/docker
+
+    robot_file_browser:
+        build: $ODOO_IMAGES/static_file_browser
+        restart: unless-stopped
+        ports:
+            - "9980:80"
+        profiles:
+            - auto
+        networks:
+            - default
+        environment:
+            - FILE_FOLDER=/robot_output
+            - URL_PATH=/robot-output
+        volumes:
+            - $HOST_RUN_DIR/run/intercom:/intercom
+            - $ODOO_IMAGES/static_file_browser/app/server.js:/usr/src/app/server.js
+            - ${CUSTOMS_DIR}:/usr/src/app/odoo
+            - ${HOST_RUN_DIR}/odoo_outdir/robot_output:/robot_output
+
+        logging:
+            driver: "json-file"
+            options:
+                max-size: "10m"
+                max-file: "3"

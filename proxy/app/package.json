@@ -15,6 +15,8 @@
     "@fastify/send": "3.1.0",
     "axios": "^1.6.0",
     "serve-favicon": "2.5.0",
-    "cookie-parser": "1.4.5"
+    "serve-index": "1.9.1",
+    "cookie-parser": "1.4.5",
+    "@fastify/express":"3.0.0"
   }
 }

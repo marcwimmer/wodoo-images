@@ -4,7 +4,10 @@ const cookie = require('@fastify/cookie');
 const fastify = Fastify({ logger: process.env.FASTIFY_DEBUG === "1" });
 const fastifyStatic = require('@fastify/static')
 const send = require('@fastify/send')
+const serveIndex = require('serve-index');
 const net = require("net");
+const fastifyExpress = require('@fastify/express');
+
 
 
 const vncvscode = "http://novnc_vscode:6080";
@@ -95,7 +98,6 @@ if (process.env.DEVMODE === "1") {
     });
 }
 if (process.env.RUN_MAIL === "1") {
-    console.log("Registerung /mailer");
     fastify.register(require('@fastify/http-proxy'), {
         upstream: `http://${process.env.ROUNDCUBE_HOST}:80`,
         prefix: '/mailer',
@@ -135,19 +137,19 @@ fastify.register(require('@fastify/http-proxy'), {
     rewritePrefix: '/',
     websocket: true,
 });
-fastify.register(require('@fastify/static'), {
-    root: '/robot_output',
-    prefix: '/robot-output/',
-    list: true,
-    index: false
+fastify.register(require('@fastify/http-proxy'), {
+    upstream: "http://robot_file_browser:80",
+    prefix: '/robot-output',
+    rewritePrefix: '/robot-output',
 })
+
 fastify.register(require('@fastify/http-proxy'), {
     upstream: `${server_odoo.protocol}://${server_odoo.host}:${server_odoo.port}`,
     prefix: '/',
     replyOptions: {
-        // undici: {
-        //     timeout: 3600 * 1000,
-        // },
+        undici: {
+            timeout: 3600 * 1000,
+        },
         rewriteRequestHeaders: (originalReq, headers) => {
             headers.host = originalReq.headers.host; // equivalent to sameOrigin
             return headers;
