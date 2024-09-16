@@ -143,17 +143,17 @@ fastify.register(require('@fastify/http-proxy'), {
     upstream: `${server_odoo.protocol}://${server_odoo.host}:${server_odoo.port}`,
     prefix: '/',
     replyOptions: {
-        undici: {
-            timeout: 3600 * 1000,
-        },
+        // undici: {
+        //     timeout: 3600 * 1000,
+        // },
         rewriteRequestHeaders: (originalReq, headers) => {
             headers.host = originalReq.headers.host; // equivalent to sameOrigin
             return headers;
         }
     },
-    preHandler: async (req, res, next) => {
+    preHandler: (req, res, next) => {
         if (options.odoo_tcp_check) {
-            await _wait_tcp_conn(server_odoo);
+            _wait_tcp_conn(server_odoo);
         }
         next();
     },
