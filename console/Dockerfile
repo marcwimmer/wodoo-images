@@ -1,5 +1,6 @@
 FROM ubuntu:24.04
 ARG WODOO_VERSION
+ARG OWNER_UID
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt update && \
 apt install -y python3-pip python3 curl rsync locales pv \
@@ -42,10 +43,30 @@ WORKDIR /root
 RUN pipx install wodoo==$WODOO_VERSION
 RUN apt install -y tmux
 
+
+RUN apt install -y pipx && pipx install wodoo
+RUN useradd -m -s /bin/bash -G sudo,docker -p $(openssl passwd -1 odoo) -u ${OWNER_UID} odoo
+RUN echo 'odoo:odoo' | sudo chpasswd
+
+USER odoo
+RUN pipx install wodoo
+RUN mkdir ~/.ssh && chmod 700 ~/.ssh
+COPY console.key.pub /home/odoo/.ssh/authorized_keys 
+
+
+USER root
+RUN chmod 600 /home/odoo/.ssh/authorized_keys
+RUN chmod 755 /home/odoo -R
+RUN mkdir /home/odoo/bin
+RUN echo 'PATH=$HOME/bin' > /home/odoo/.bashrc
+
+ADD sshd_config /etc/ssh/sshd_config
+RUN sudo chsh -s /bin/rbash odoo
+
+RUN \
+ln -s /bin/ls /home/odoo/bin/ls && \
+ln -s /bin/cat /home/odoo/bin/cat 
+
 ADD entrypoint.sh /entrypoint.sh
 RUN chmod a+x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
-
-RUN useradd -m -s /bin/bash -G sudo,docker -p $(openssl passwd -1 odoo) odoo
-RUN echo 'odoo:odoo' | sudo chpasswd
-USER odoo

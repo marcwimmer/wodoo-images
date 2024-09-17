@@ -109,13 +109,19 @@ if (process.env.RUN_WEBSSH === "1") {
         upstream: process.env.WEBSSH_HOST,
         prefix: '/console',
         rewritePrefix: '/',
-        websocket: false,
+        websocket: true,
         preHandler: (req, res, next) => {
-            debugger;
-            res.send("HALLO");
-            // TODO
-            //?hostname=10.0.3.1&fontsize=10&username=cicd_min&password=ZjdmZjVmZjg4ZTMwODRkMTk5MmIzYTdjNGRmM2Q3ZDI=&command=start_tmux%20%27cicd_tmux_session_cicd_cicd_test_odoo_test1_shellshell%27%20%27cicd_cicd-test-odoo_test1%27%20%27/home/cicd/workspace%27%20%27%27
-            next();
+
+            const host = 'console';
+            const username = 'odoo';
+            const password = Buffer.from("odoo").toString('base64');
+            if (req.url.indexOf("?") == -1) {
+                const url = req.url + `?hostname=${host}&fontsize=10&username=${username}&password=${password}&command=/bin/bash`
+                res.redirect(url, 301)
+            }
+            else {
+                next()
+            }
         },
     });
     fastify.register(require('@fastify/http-proxy'), {
