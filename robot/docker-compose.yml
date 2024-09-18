@@ -30,8 +30,6 @@ services:
     robot_file_browser:
         build: $ODOO_IMAGES/static_file_browser
         restart: unless-stopped
-        ports:
-            - "9980:80"
         profiles:
             - auto
         networks:
