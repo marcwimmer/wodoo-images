@@ -164,4 +164,5 @@ echo 'export PATH=$PATH:/usr/local/bin/pipxbin' >> /root/.bashrc
 
 
 RUN apt update && apt install -y libodbc1 unixodbc-dev unixodbc
-RUN pip3 install requests-oauth2client faker requests_oauthlib pyyamlr
+RUN pip3 install requests-oauth2client faker requests_oauthlib 
+RUN pip3 install lxml_html_clean
