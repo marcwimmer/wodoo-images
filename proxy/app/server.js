@@ -102,6 +102,10 @@ if (process.env.RUN_MAIL === "1") {
         upstream: `http://${process.env.ROUNDCUBE_HOST}:80`,
         prefix: '/mailer',
         rewritePrefix: '/mailer',
+        rewriteRequestHeaders: (originalReq, headers) => {
+            headers.host = originalReq.headers.host; // equivalent to sameOrigin
+            return headers;
+        }
     });
 }
 if (process.env.RUN_WEBSSH === "1") {
