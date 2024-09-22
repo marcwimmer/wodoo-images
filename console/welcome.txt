@@ -1,0 +1,15 @@
+   ___   ______      ___      ___    
+ .'   `.|_   _ `.  .'   `.  .'   `.  
+/  .-.  \ | | `. \/  .-.  \/  .-.  \ 
+| |   | | | |  | || |   | || |   | | 
+\  `-'  /_| |_.' /\  `-'  /\  `-'  / 
+ `.___.'|______.'  `.___.'  `.___.'  
+                                    
+Commands:
+
+  * odoo pgcli - postgres sql
+  * odoo shell - start odoo shell
+  * odoo restart odoo  - restart web container
+  * odoo restart odoo_queuejobs  - restart queuejobs
+  * odoo restart odoo_cronjobs  - restart cronjobs
+  * odoo show-table-sizes

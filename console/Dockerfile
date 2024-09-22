@@ -1,6 +1,7 @@
 FROM ubuntu:24.04
 ARG WODOO_VERSION
 ARG OWNER_UID
+ARG project_name
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt update && \
 apt install -y python3-pip python3 curl rsync locales pv \
@@ -45,6 +46,8 @@ RUN apt install -y tmux
 
 
 RUN apt install -y pipx && pipx install wodoo
+RUN cat /etc/passwd
+RUN deluser ubuntu
 RUN useradd -m -s /bin/bash -G sudo,docker -p $(openssl passwd -1 odoo) -u ${OWNER_UID} odoo
 RUN echo 'odoo:odoo' | sudo chpasswd
 
@@ -58,15 +61,27 @@ USER root
 RUN chmod 600 /home/odoo/.ssh/authorized_keys
 RUN chmod 755 /home/odoo -R
 RUN mkdir /home/odoo/bin
-RUN echo 'PATH=$HOME/bin' > /home/odoo/.bashrc
 
 ADD sshd_config /etc/ssh/sshd_config
-RUN sudo chsh -s /bin/rbash odoo
+# TODO
+# RUN sudo chsh -s /bin/rbash odoo
 
+RUN apt install -y silversearcher-ag
 RUN \
 ln -s /bin/ls /home/odoo/bin/ls && \
-ln -s /bin/cat /home/odoo/bin/cat 
+ln -s /bin/cat /home/odoo/bin/cat && \
+ln -s /usr/bin/tmux /home/odoo/bin/tmux && \
+ln -s /usr/bin/docker /home/odoo/bin/docker && \
+ln -s /home/odoo/.local/bin/odoo /home/odoo/bin/odoo
 
 ADD entrypoint.sh /entrypoint.sh
 RUN chmod a+x /entrypoint.sh
+ADD welcome.txt /usr/share/welcome.txt
+RUN ln -s /opt/src /home/odoo/$project_name
+RUN chmod -x /etc/update-motd.d/* && rm /etc/update-motd.d -Rf 
+RUN truncate -s 0 /etc/legal /etc/bash.bashrc
+RUN usermod -aG docker odoo
+ADD profile.d /home/odoo/.profile
+RUN chown odoo:odoo /home/odoo/.profile && chmod a+x /home/odoo/.profile
 ENTRYPOINT ["/entrypoint.sh"]
+

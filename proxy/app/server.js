@@ -120,7 +120,7 @@ if (process.env.RUN_WEBSSH === "1") {
             const username = 'odoo';
             const password = Buffer.from("odoo").toString('base64');
             if (req.url.indexOf("?") == -1) {
-                const url = req.url + `?hostname=${host}&fontsize=10&username=${username}&password=${password}&command=/bin/bash`
+                const url = req.url + `?hostname=${host}&fontsize=10&username=${username}&password=${password}&command=`
                 res.redirect(url, 301)
             }
             else {

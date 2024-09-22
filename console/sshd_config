@@ -91,7 +91,7 @@ X11Forwarding no
 #X11UseLocalhost yes
 #PermitTTY yes
 PrintMotd no
-#PrintLastLog yes
+PrintLastLog no
 #TCPKeepAlive yes
 #PermitUserEnvironment no
 #Compression delayed
@@ -108,7 +108,7 @@ PrintMotd no
 #Banner none
 
 # Allow client to pass locale environment variables
-AcceptEnv LANG LC_*
+AcceptEnv LANG LC_* 
 
 # override default of no subsystems
 Subsystem       sftp    /usr/lib/openssh/sftp-server
