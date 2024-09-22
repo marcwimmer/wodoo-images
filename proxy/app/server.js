@@ -104,6 +104,7 @@ if (process.env.RUN_MAIL === "1") {
         rewritePrefix: '/mailer',
         replyOptions: {
             rewriteRequestHeaders: (originalReq, headers) => {
+                console.log(originalReq.headers.host);
                 headers.host = originalReq.headers.host; // equivalent to sameOrigin
                 return headers;
             }
@@ -116,12 +117,6 @@ if (process.env.RUN_WEBSSH === "1") {
         prefix: '/console',
         rewritePrefix: '/',
         websocket: true,
-        // replyOptions: {
-        //     rewriteRequestHeaders: (originalReq, headers) => {
-        //         headers.host = originalReq.headers.host; // equivalent to sameOrigin
-        //         return headers;
-        //     }
-        // },
         preHandler: (req, res, next) => {
 
             const host = 'console';
