@@ -1,7 +1,5 @@
 services:
   console:
-    ports:
-      - "2222:22"
     build:
       context: $ODOO_IMAGES/console
       args:
