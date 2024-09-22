@@ -3,7 +3,7 @@ services:
     build: ${ODOO_IMAGES}/webssh
     restart: unless-stopped
     profiles:
-      - auto
+      - manual
     labels:
       odoo_framework.apply_env: 0
     volumes:
