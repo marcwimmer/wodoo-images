@@ -102,11 +102,13 @@ if (process.env.RUN_MAIL === "1") {
         upstream: `http://${process.env.ROUNDCUBE_HOST}:80`,
         prefix: '/mailer',
         rewritePrefix: '/mailer',
-        rewriteRequestHeaders: (originalReq, headers) => {
-            headers.host = originalReq.headers.host; // equivalent to sameOrigin
-            return headers;
+        replyOptions: {
+            rewriteRequestHeaders: (originalReq, headers) => {
+                headers.host = originalReq.headers.host; // equivalent to sameOrigin
+                return headers;
+            }
         }
-    });
+    })
 }
 if (process.env.RUN_WEBSSH === "1") {
     fastify.register(require('@fastify/http-proxy'), {
@@ -114,6 +116,12 @@ if (process.env.RUN_WEBSSH === "1") {
         prefix: '/console',
         rewritePrefix: '/',
         websocket: true,
+        // replyOptions: {
+        //     rewriteRequestHeaders: (originalReq, headers) => {
+        //         headers.host = originalReq.headers.host; // equivalent to sameOrigin
+        //         return headers;
+        //     }
+        // },
         preHandler: (req, res, next) => {
 
             const host = 'console';
