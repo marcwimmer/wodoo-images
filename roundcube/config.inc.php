@@ -1,4 +1,6 @@
 <?php
+$config['product_name'] = "Odoo Webmailer";
+$config['list_cols'] = ['subject', 'status', 'from', 'to', 'date', 'size', 'flag', 'attachment'];
 $config['db_dsnw'] = 'sqlite:////rc/roundcubemail.sqlite?mode=0640';
 $config['imap_host'] = '__MAIL_SERVER__';
 $config['assets_path'] = '/mailer';
