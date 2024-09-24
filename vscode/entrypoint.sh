@@ -5,6 +5,11 @@ if [[ "$DEVMODE" != "1" ]]; then
 	exit 0
 fi
 
+if [[ -z $HOST_SRC_PATH ]]; then
+	echo "Please set environment variable HOST_SRC_PATH"
+	exit -1
+fi
+
 GIT_USERNAME="$1"
 GIT_EMAIL="$2"
 REPO_URL="$3"
@@ -12,16 +17,6 @@ REPO_AUTH_TYPE="$4"
 REPO_KEY="$5"
 USER_HOME=$(eval echo ~$USERNAME)
 SSHDIR="$USER_HOME/.ssh"
-
-# if [[ -z "$GIT_USERNAME" ]]; then
-# 	echo "Need git username"
-# 	exit -1
-# fi
-# if [[ -z "$REPO_URL" ]]; then
-# 	echo "Need git repo url"
-# 	exit -1
-# fi
-
 
 DISPLAY=:0.0
 export DISPLAY
@@ -67,7 +62,7 @@ echo "alias odoo=\"$USER_HOME/.local/bin/odoo --project-name=$project_name\"" >>
 STARTUPFILE_FLUXBOX="$USER_HOME/.fluxbox/startup"
 echo '#!/bin/bash' > $STARTUPFILE_FLUXBOX
 echo 'sleep 5' >> $STARTUPFILE_FLUXBOX
-echo "DISPLAY=$DISPLAY /usr/bin/code-insiders /opt/src &" >> $STARTUPFILE_FLUXBOX
+echo "DISPLAY=$DISPLAY /usr/bin/code-insiders '$HOST_SRC_PATH' &" >> $STARTUPFILE_FLUXBOX
 chown $USERNAME:$USERNAME $STARTUPFILE_FLUXBOX
 chmod a+x $STARTUPFILE_FLUXBOX
 gosu $USERNAME fluxbox &
@@ -75,7 +70,7 @@ gosu $USERNAME fluxbox &
 chown $USERNAME:$USERNAME /home/user1/.odoo -R
 
 # set git user and repo
-cd /opt/src
+cd "$HOST_SRC_PATH"
 if [[ ! -z "$GIT_USERNAME" && ! -z "$GIT_EMAIL" ]]; then
 	git config --global user.email "$GIT_EMAIL"
 	git config --global user.name "$GIT_USERNAME"
@@ -96,7 +91,7 @@ fi
 
 echo "Git user is $GIT_USERNAME"
 
-line="DISPLAY=$DISPLAY /usr/bin/code-insiders /opt/src"
+line="DISPLAY=$DISPLAY /usr/bin/code-insiders \"$HOST_SRC_PATH\""
 gosu $USERNAME bash -c "$line"
 sleep 2
 WINDOW_ID=$(DISPLAY="$DISPLAY" xdotool getactivewindow)
