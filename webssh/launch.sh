@@ -11,7 +11,7 @@ wssh \
 --port=8080 \
 --xsrf=False \
 --origin='*' \
---xheaders=True \
+--xheaders=False \
 --debug \
 --wpintvl=3600 \
 --redirect false
