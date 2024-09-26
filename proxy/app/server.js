@@ -1,7 +1,7 @@
 const Fastify = require('fastify');
 const path = require('node:path');
 const cookie = require('@fastify/cookie');
-const fastify = Fastify({trustProxy: true, logger: process.env.FASTIFY_DEBUG === "1" });
+const fastify = Fastify({ trustProxy: true, logger: process.env.FASTIFY_DEBUG === "1" });
 const fastifyStatic = require('@fastify/static')
 const send = require('@fastify/send')
 const serveIndex = require('serve-index');
