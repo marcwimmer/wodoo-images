@@ -189,7 +189,7 @@ fastify.setErrorHandler((error, request, reply) => {
             <body>
             <h1>500 - Internal Server Error</h1>
             <p>Oops! Something went wrong on our end.</p>
-            <p>Click here to return back to the cicd application.</p>
+            <p>Click <a href='/web'>here</a> to return back to the application.</p>
             <p>Error Details: ${error.message}</p>
             </body>
         </html>
