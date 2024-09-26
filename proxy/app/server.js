@@ -23,6 +23,12 @@ const options = {
     odoo_tcp_check: true
 };
 
+const sameOrigin = (originalReq, headers) => {
+    headers.host = originalReq.headers.host; // equivalent to sameOrigin
+    return headers;
+}
+
+
 const path_icon = path.join(__dirname, 'favicon.ico');
 
 const PORT = process.env.PORT || 3000;
@@ -117,6 +123,9 @@ if (process.env.RUN_WEBSSH === "1") {
         prefix: '/console',
         rewritePrefix: '/',
         websocket: true,
+        replyOptions: {
+            rewriteRequestHeaders: sameOrigin,
+        },
         preHandler: (req, res, next) => {
 
             const host = 'console';
@@ -163,10 +172,7 @@ fastify.register(require('@fastify/http-proxy'), {
         undici: {
             timeout: 3600 * 1000,
         },
-        rewriteRequestHeaders: (originalReq, headers) => {
-            headers.host = originalReq.headers.host; // equivalent to sameOrigin
-            return headers;
-        }
+        rewriteRequestHeaders: sameOrigin,
     },
     preHandler: (req, res, next) => {
         if (options.odoo_tcp_check) {

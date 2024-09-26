@@ -9,6 +9,9 @@ services:
         # Dont do: if images used, then not compatible
         # OWNER_UID: $OWNER_UID
     privileged: true
+    links:
+        - webssh
+        - proxy
     restart: "unless-stopped"
     profiles:
       - manual
