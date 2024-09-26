@@ -29,9 +29,6 @@ const sameOrigin = (originalReq, headers) => {
 }
 
 
-const path_icon = path.join(__dirname, 'favicon.ico');
-
-const PORT = process.env.PORT || 3000;
 
 fastify.register(cookie);
 
@@ -109,11 +106,7 @@ if (process.env.RUN_MAIL === "1") {
         prefix: '/mailer',
         rewritePrefix: '/mailer',
         replyOptions: {
-            rewriteRequestHeaders: (originalReq, headers) => {
-                console.log(originalReq.headers.host);
-                headers.host = originalReq.headers.host; // equivalent to sameOrigin
-                return headers;
-            }
+            rewriteRequestHeaders: sameOrigin
         }
     })
 }
