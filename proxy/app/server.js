@@ -126,6 +126,7 @@ if (process.env.RUN_WEBSSH === "1") {
             const password = Buffer.from("odoo").toString('base64');
             if (req.url.indexOf("?") == -1) {
                 const url = req.url + `?hostname=${host}&fontsize=10&username=${username}&password=${password}&command=`
+                res.header['Cache-Control'] = 'no-cache, no-store, must-revalidate';
                 res.redirect(url, 301)
             }
             else {
