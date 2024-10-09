@@ -1,5 +1,6 @@
 FROM ubuntu:24.04
 ARG OWNER_UID
+ARG DOCKER_GID
 ARG TARGETARCH
 
 RUN apt update && apt install -y curl
@@ -73,7 +74,7 @@ RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/d
 RUN apt update
 RUN apt install docker-ce docker-ce-cli containerd.io -y
 RUN delgroup systemd-journal && groupmod -g 999 docker
-RUN usermod -aG docker $USERNAME
+RUN usermod -aG $DOCKER_GID $USERNAME
 
 RUN chsh -s /bin/bash $USERNAME
 RUN cp /etc/skel/.bashrc /home/$USERNAME/.bashrc
