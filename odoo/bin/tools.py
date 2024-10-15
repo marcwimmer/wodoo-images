@@ -157,6 +157,12 @@ def _replace_variables_in_config_files(local_config):
     if local_config and local_config.additional_addons_paths:
         additional_addons_paths = local_config.additional_addons_paths
 
+    if os.getenv("ADDITIONAL_ADDONS_PATHS"):
+        if not additional_addons_paths:
+            additional_addons_paths = os.getenv("ADDITIONAL_ADDONS_PATHS")
+        else:
+            additional_addons_paths += "," + os.getenv("ADDITIONAL_ADDONS_PATHS")
+
     ADDONS_PATHS = ",".join(
         list(
             map(
