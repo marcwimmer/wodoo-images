@@ -69,7 +69,6 @@ def update(config, mode, modules):
 
     # if ','.join(modules) == 'all': # needed for migration
     #    raise Exception("update 'all' not allowed")
-
     if config.run_test and not config.test_tags:
         TESTS = "--test-enable"
     else:
@@ -239,7 +238,6 @@ def main(
     test_tags,
     log,
 ):
-
     # region config
     config.interactive = not non_interactive
     config.i18n_overwrite = i18n
@@ -252,9 +250,7 @@ def main(
     config.test_tags = test_tags
     config.log = log
 
-    config.run_test = os.getenv("ODOO_RUN_TESTS", "1") == "1"
-    if no_tests:
-        config.run_test = False
+    config.run_test = not no_tests and os.getenv("ODOO_RUN_TESTS", "1") == "1"
 
     config.no_update_modulelist = no_update_modulelist
     config.manifest = MANIFEST()
