@@ -10,7 +10,8 @@ RUN python3 <<'EOF'
 import os
 from pathlib import Path
 downloadlink = Path("/tmp/downloadlink")
-link = ("https://code.visualstudio.com/sha/download?build=insider&os=linux-deb-")
+# link = ("https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-")
+link = "https://artefacts.zebroo.de/simplicissimus_agatha_christie/code-"
 if os.getenv("TARGETARCH") == "amd64": 
    link += "x64"
 else:
@@ -19,7 +20,8 @@ downloadlink.write_text(link)
 EOF
 
 RUN echo "Download link: $(cat /tmp/downloadlink)"
-RUN curl  -L -o /tmp/vscode.deb "$(cat /tmp/downloadlink)"
+RUN apt install -y wget
+RUN wget -O /tmp/vscode.deb "$(cat /tmp/downloadlink)"
 
 RUN apt install -y /tmp/vscode.deb
 RUN apt update && apt upgrade -y
