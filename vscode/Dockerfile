@@ -53,19 +53,19 @@ pipx install wodoo && \
 pipx install gimera
 
 
-RUN mkdir -p "/home/$USERNAME/.config/Code - Insiders/User"
+RUN mkdir -p "/home/$USERNAME/.config/Code/User"
 ADD default_vscode_settings.json /tmp/settings
 
 USER root
-RUN mv /tmp/settings "/home/$USERNAME/.config/Code - Insiders/User/settings.json"
+RUN mv /tmp/settings "/home/$USERNAME/.config/Code/User/settings.json"
 RUN find /home/$USERNAME -not -user $USERNAME -exec chown -R $USERNAME:$USERNAME {} \;
 
 USER $USERNAME
 # ADD some extensions here
-RUN  /usr/bin/code-insiders --install-extension ms-python.python || true
-RUN /usr/bin/code-insiders --install-extension robocorp.robotframework-lsp || true
-RUN /usr/bin/code-insiders --install-extension vscodevim.vim || true
-RUN /usr/bin/code-insiders --install-extension MarcWimmerITE.odoobrowserITE || true
+RUN  /usr/bin/code --install-extension ms-python.python || true
+RUN /usr/bin/code --install-extension robocorp.robotframework-lsp || true
+RUN /usr/bin/code --install-extension vscodevim.vim || true
+RUN /usr/bin/code --install-extension MarcWimmerITE.odoobrowserITE || true
 
 USER root
 
