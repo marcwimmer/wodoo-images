@@ -62,7 +62,7 @@ echo "alias odoo=\"$USER_HOME/.local/bin/odoo --project-name=$project_name\"" >>
 STARTUPFILE_FLUXBOX="$USER_HOME/.fluxbox/startup"
 echo '#!/bin/bash' > $STARTUPFILE_FLUXBOX
 echo 'sleep 5' >> $STARTUPFILE_FLUXBOX
-echo "DISPLAY=$DISPLAY /usr/bin/code-insiders '$HOST_SRC_PATH' &" >> $STARTUPFILE_FLUXBOX
+echo "DISPLAY=$DISPLAY /usr/bin/code '$HOST_SRC_PATH' &" >> $STARTUPFILE_FLUXBOX
 chown $USERNAME:$USERNAME $STARTUPFILE_FLUXBOX
 chmod a+x $STARTUPFILE_FLUXBOX
 gosu $USERNAME fluxbox &
@@ -91,7 +91,7 @@ fi
 
 echo "Git user is $GIT_USERNAME"
 
-line="DISPLAY=$DISPLAY /usr/bin/code-insiders \"$HOST_SRC_PATH\""
+line="DISPLAY=$DISPLAY /usr/bin/code \"$HOST_SRC_PATH\""
 gosu $USERNAME bash -c "$line"
 sleep 2
 WINDOW_ID=$(DISPLAY="$DISPLAY" xdotool getactivewindow)
