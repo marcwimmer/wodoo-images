@@ -58,6 +58,7 @@ def _run_test(
     selenium_timeout=20,
     parallel=1,
     tags=None,
+    odoo_version=None,
     **run_parameters,
 ):
     assert browser in Browsers
@@ -74,6 +75,7 @@ def _run_test(
         "ODOO_USER": user,
         "ODOO_PASSWORD": password,
         "ODOO_DB": dbname,
+        "ODOO_VERSION": odoo_version,
         "BROWSER": browser["alias"],
         "ALIAS": browser["alias"],
         "DRIVER": browser["driver"],
