@@ -10,6 +10,7 @@ services:
             OUTPUT_DIR: /opt/output
             OWNER_UID: ${OWNER_UID}
             ODOO_HOME: /opt/src
+            ODOO_CMD: /opt/robot/.local/pipx/venvs/wodoo/bin/odoo
         profiles:
             - auto
         extra_hosts:
