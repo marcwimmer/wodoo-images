@@ -21,6 +21,7 @@ echo \
 apt update && apt install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin python3-venv zlib1g-dev
 
 # change docker group id to match host
+RUN cat /etc/group
 RUN getent group $DOCKER_GID && groupmod -g 555 $(getent group $DOCKER_GID | cut -d: -f1) || true
 RUN groupmod -g $DOCKER_GID docker
 
