@@ -1,6 +1,7 @@
 FROM ubuntu:24.04
 ARG WODOO_VERSION
 ARG OWNER_UID
+ARG DOCKER_GID
 ARG project_name
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt update && \
