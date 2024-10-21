@@ -49,6 +49,7 @@ Xvfb $DISPLAY -screen 0 "${DISPLAY_WIDTH}x${DISPLAY_HEIGHT}x${DISPLAY_COLOR}" &
 	-rfbport 5900 \
 	-noxdamage \
 	-nopw \
+	-shared \
 	-scale "${DISPLAY_WIDTH}x${DISPLAY_HEIGHT}" \
 	&
 xhost +local: &
