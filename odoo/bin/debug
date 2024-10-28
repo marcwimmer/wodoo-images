@@ -1,2 +1,2 @@
 #!/bin/bash
-exec debug.py "$@"
+exec $WODOO_PYTHON /odoolib/debug.py "$@"
