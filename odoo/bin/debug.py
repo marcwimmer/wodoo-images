@@ -1,4 +1,4 @@
-#!/usr/bin/env wodoo_python
+#!/usr/bin/env bash
 import traceback
 import time
 import os

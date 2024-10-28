@@ -220,7 +220,7 @@ COPY --from=build_pip /opt/python /opt/python
 COPY --from=build_pip /opt/venv /opt/venv
 WORKDIR /opt/python
 RUN make install
-RUN rm /usr/local/bin/python3 /usr/bin/python3
+#RUN rm /usr/local/bin/python3 /usr/bin/python3
 
 
 # Transfer lib postal (TODO)
@@ -233,8 +233,8 @@ RUN rm /usr/local/bin/python3 /usr/bin/python3
 RUN echo "$ODOO_DEB_REQUIREMENTS"  | base64 --decode > /root/deb_requirements.txt
 RUN apt update && xargs apt install -y < /root/deb_requirements.txt
 
-WORKDIR /usr/local/bin
-RUN ln -s /opt/venv/bin/python3
+#WORKDIR /usr/local/bin
+#RUN ln -s /opt/venv/bin/python3
 
 WORKDIR /opt/odoo
 
@@ -243,5 +243,5 @@ WORKDIR /opt/odoo
 RUN if [ "$TARGETARCH" = "arm64" ]; then \
 apt update && \
 apt install -y libpq-dev build-essential && \
-python3 -mpip install psycopg2-binary --no-binary psycopg2-binary --force-reinstall; \
+/opt/venv/bin/python3 -mpip install psycopg2-binary --no-binary psycopg2-binary --force-reinstall; \
 fi
