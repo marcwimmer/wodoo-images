@@ -220,7 +220,8 @@ COPY --from=build_pip /opt/python /opt/python
 COPY --from=build_pip /opt/venv /opt/venv
 WORKDIR /opt/python
 RUN make install
-RUN rm /usr/local/bin/python3 /usr/bin/python3
+# Otherwise libreoffice installation does not work
+# RUN rm /usr/local/bin/python3 /usr/bin/python3
 
 
 # Transfer lib postal (TODO)
