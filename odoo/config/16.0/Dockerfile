@@ -234,9 +234,6 @@ RUN make install
 RUN echo "$ODOO_DEB_REQUIREMENTS"  | base64 --decode > /root/deb_requirements.txt
 RUN apt update && xargs apt install -y < /root/deb_requirements.txt
 
-#WORKDIR /usr/local/bin
-#RUN ln -s /opt/venv/bin/python3
-
 WORKDIR /opt/odoo
 
 # There is a BUG with M1 and SCRAM authentication
@@ -244,5 +241,5 @@ WORKDIR /opt/odoo
 RUN if [ "$TARGETARCH" = "arm64" ]; then \
 apt update && \
 apt install -y libpq-dev build-essential && \
-/opt/venv/bin/python3 -mpip install psycopg2-binary --no-binary psycopg2-binary --force-reinstall; \
+/opt/venv/python3 -mpip install psycopg2-binary --no-binary psycopg2-binary --force-reinstall; \
 fi
