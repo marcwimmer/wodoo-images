@@ -241,5 +241,5 @@ WORKDIR /opt/odoo
 RUN if [ "$TARGETARCH" = "arm64" ]; then \
 apt update && \
 apt install -y libpq-dev build-essential && \
-/opt/venv/python3 -mpip install psycopg2-binary --no-binary psycopg2-binary --force-reinstall; \
+/opt/venv/bin/python3 -mpip install psycopg2-binary --no-binary psycopg2-binary --force-reinstall; \
 fi

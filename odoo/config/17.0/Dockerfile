@@ -256,7 +256,7 @@ RUN echo "$ODOO_DEB_REQUIREMENTS"  | base64 --decode > /root/deb_requirements.tx
 RUN apt update && xargs apt install -y < /root/deb_requirements.txt
 
 WORKDIR /usr/local/bin
-RUN ln -s /opt/venv/bin/python3
+# RUN ln -s /opt/venv/bin/python3
 
 WORKDIR /opt/odoo
 
