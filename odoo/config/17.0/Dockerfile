@@ -255,7 +255,6 @@ RUN make install
 RUN echo "$ODOO_DEB_REQUIREMENTS"  | base64 --decode > /root/deb_requirements.txt
 RUN apt update && xargs apt install -y < /root/deb_requirements.txt
 
-
 WORKDIR /opt/odoo
 
 # There is a BUG with M1 and SCRAM authentication
