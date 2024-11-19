@@ -210,6 +210,12 @@ def _replace_variables_in_config_files(local_config):
                 "ODOO_ADMIN_PASSWORD"
             ]
 
+        if config.get("ODOO_DEBUG_LOGLEVEL"):
+            loglevel = config['ODOO_DEBUG_LOGLEVEL']
+            LOGLEVEL = loglevel.upper()
+            config_file_content['options']['log_handler'] = f":{LOGLEVEL},openerp:{LOGLEVEL},werkzeug:{LOGLEVEL},odoo.addons.queue_job:{LOGLEVEL}"
+            config_file_content['options']['log_level'] = loglevel
+
         if "without_demo" not in config_file_content["options"]:
             if os.getenv("ODOO_DEMO", "") == "1":
                 config_file_content["options"]["without_demo"] = "False"
