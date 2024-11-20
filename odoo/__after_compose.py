@@ -1,3 +1,4 @@
+import time
 import sys
 from packaging.requirements import Requirement
 from packaging.markers import Marker
@@ -126,8 +127,18 @@ def _filter_pip(packages, config):
         if os.uname().machine == "aarch64":
             if float(config.ODOO_VERSION) in [14.0, 15.0, 16.0]:
                 if "gevent" in x:
-                    return "gevent==21.12.0"
+                    click.secho(
+                        "HACK: to provide correct gevent: return gevent==22.10.2",
+                        fg="red",
+                    )
+                    time.sleep(0.7)
+                    return "gevent==22.10.2"
                 if "greenlet" in x:
+                    click.secho(
+                        "HACK: removing version info from greenlet on M1 chip",
+                        fg="red",
+                    )
+                    time.sleep(0.7)
                     return "greenlet"
         return x
 
@@ -138,6 +149,7 @@ def _filter_pip(packages, config):
 
 def _determine_requirements(config, yml, PYTHON_VERSION, settings, globals):
     from wodoo.odoo_config import customs_dir
+
     if float(config.ODOO_VERSION) < 13.0:
         return
 
@@ -156,8 +168,8 @@ def _determine_requirements(config, yml, PYTHON_VERSION, settings, globals):
     static_reqs = customs_dir() / "requirements.static"
     if static_reqs.exists():
         static_reqs = static_reqs.read_text().splitlines()
-        external_dependencies['pip'] += static_reqs
-        external_dependencies_justaddons['pip'] += static_reqs
+        external_dependencies["pip"] += static_reqs
+        external_dependencies_justaddons["pip"] += static_reqs
 
     store_sha_of_external_deps(config, external_dependencies)
 
@@ -259,7 +271,9 @@ def _get_dependencies(config, globals, PYTHON_VERSION, exclude=None):
     modules = list(sorted(set(modules) | set(MINIMAL_MODULES or [])))
     if exclude:
         modules = [x for x in modules if not_excluded(x)]
-    external_dependencies = Modules.get_all_external_dependencies(modules, PYTHON_VERSION)
+    external_dependencies = Modules.get_all_external_dependencies(
+        modules, PYTHON_VERSION
+    )
     if external_dependencies:
         for key in sorted(external_dependencies):
             if not external_dependencies[key]:
@@ -335,7 +349,7 @@ def append_odoo_requirements(config, external_dependencies, tools):
         if not libpy:
             continue
 
-        if ';' in libpy:
+        if ";" in libpy:
             req = Requirement(libpy)
             package_name = req.name
             version_specifier = req.specifier
