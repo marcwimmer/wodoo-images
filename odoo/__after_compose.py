@@ -1,4 +1,7 @@
 import sys
+from packaging.requirements import Requirement
+from packaging.markers import Marker
+from packaging.specifiers import SpecifierSet
 import hashlib
 from copy import deepcopy
 from datetime import datetime
@@ -328,12 +331,23 @@ def append_odoo_requirements(config, external_dependencies, tools):
 
     for libpy in requirements_odoo.read_text().splitlines():
         libpy = libpy.strip()
+        libpy = libpy.split("#")[0].strip()
+        if not libpy:
+            continue
+        if 'pypdf2' in libpy.lower():
+            import pudb;pudb.set_trace()
 
-        # if ";" in libpy or tools._extract_python_libname(libpy) not in (
-        #     tools._extract_python_libname(x)
-        #     for x in external_dependencies.get("pip", [])
-        # ):
-        # gevent is special; it has sys_platform set - several lines;
+        if ';' in libpy:
+            req = Requirement(libpy)
+            package_name = req.name
+            version_specifier = req.specifier
+            marker = req.marker  # This is a Marker object
+            if marker is None or marker.evaluate():
+                libpy = libpy.split(";")[0].strip()
+                pass
+            else:
+                continue
+
         external_dependencies["pip"].append(libpy)
 
 
