@@ -334,8 +334,6 @@ def append_odoo_requirements(config, external_dependencies, tools):
         libpy = libpy.split("#")[0].strip()
         if not libpy:
             continue
-        if 'pypdf2' in libpy.lower():
-            import pudb;pudb.set_trace()
 
         if ';' in libpy:
             req = Requirement(libpy)
