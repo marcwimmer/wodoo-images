@@ -354,7 +354,8 @@ def append_odoo_requirements(config, external_dependencies, tools):
             package_name = req.name
             version_specifier = req.specifier
             marker = req.marker  # This is a Marker object
-            if marker is None or marker.evaluate():
+            PYTHON_VERSION = '.'.join(config.ODOO_PYTHON_VERSION.split(".")[:2])
+            if marker is None or marker.evaluate({'python_version': PYTHON_VERSION}):
                 libpy = libpy.split(";")[0].strip()
                 pass
             else:
