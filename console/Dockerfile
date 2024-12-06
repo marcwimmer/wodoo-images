@@ -63,7 +63,6 @@ COPY console.key.pub /home/odoo/.ssh/authorized_keys
 
 USER root
 RUN chmod 600 /home/odoo/.ssh/authorized_keys
-RUN chmod 755 /home/odoo -R
 RUN mkdir /home/odoo/bin
 
 ADD sshd_config /etc/ssh/sshd_config
