@@ -187,6 +187,7 @@ def _determine_requirements(config, yml, PYTHON_VERSION, settings, globals):
         service["build"]["args"]["ODOO_REQUIREMENTS_CLEARTEXT"] = (
             ";".join(py_deps).encode("utf-8")
         ).decode("utf-8")
+        service["build"]["args"]["ODOO_DEB_REQUIREMENTS_CLEARTEXT"] = "\n".join(sorted(external_dependencies["deb"]))
         service["build"]["args"]["ODOO_DEB_REQUIREMENTS"] = base64.encodebytes(
             "\n".join(sorted(external_dependencies["deb"])).encode("utf-8")
         ).decode("utf-8")

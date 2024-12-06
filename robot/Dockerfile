@@ -24,7 +24,7 @@ RUN git clone https://github.com/mozilla/geckodriver.git && cd geckodriver \
 	&& rm -rf /var/lib/apt/lists/* /var/cache/apt/*
 
 WORKDIR /opt/geckodriver
-RUN cargo install cargo-feature
+RUN cargo install --locked cargo-feature
 RUN cargo build --release
 RUN mv ./target/release/geckodriver /usr/local/bin/
 
