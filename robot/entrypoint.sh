@@ -1,7 +1,9 @@
 #!/bin/bash
 tee >/tmp/archive <&0
-usermod -u $OWNER_UID robot
-chown robot /opt/robot 
-chown robot /opt/robot/.odoo
-chown robot /opt/robot/.odoo/images
+
+echo "Fixing possible wrong user rights"
+find /opt/src -not -user robot -exec chown robot {} \;
+find /opt/robot/.odoo -not -user robot -exec chown robot {} \;
+find /opt/robot/.odoo/images -not -user robot -exec chown robot {} \;
+echo "Finished fixxing possible missed ownerships"
 exec gosu robot python3 robotest.py "$@"

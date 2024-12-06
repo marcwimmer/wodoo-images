@@ -217,12 +217,8 @@ def collect_all_reports(test_file, parent_dir):
     Directory contains directories which are numbers that indicate the amount of
     workers.
     """
-    files = []
-    for dir in Path(parent_dir).glob("*"):
-        if not dir.is_dir():
-            continue
-        path = dir / 'output.xml'
-        files.append(path)
+    
+    files = list(map(Path, subprocess.check_output(["find", parent_dir, "-type", "f", "-name", "output.xml"], encoding='utf8').strip().splitlines()))
     name = test_file.name.replace('.robot', '')
     with open(parent_dir / 'output.txt', 'w') as stdout:
         os.chdir(parent_dir)
@@ -258,7 +254,9 @@ def run_tests(params, test_files, token, results_file):
     results_file = output_dir / (results_file or 'results.json')
     results_file.write_text(json.dumps(test_results))
     uid = os.environ["OWNER_UID"]
-    os.system(f"sudo chown -R {uid}:{uid} '{output_dir.parent}'")
+    subprocess.check_call([
+        "find", output_dir.parent, '-not', '-uid', str(uid),
+        f'-exec', 'chown', str(uid), '{}', ';'])
     logger.info(f"Created output file at {results_file}")
 
 
@@ -285,19 +283,7 @@ def _clean_dir(path):
         else:
             file.unlink()
 
-def fix_output_ownership():
-    assert os.getenv("OUTPUT_DIR"), "$OUTPUT_DIR is not defined"
-    subprocess.check_call("sudo chown -R robot \"$OUTPUT_DIR\"", shell=True)
-    assert os.getenv("ODOO_IMAGES"), "$ODOO_IMAGES env not defined"
-    subprocess.check_call([
-        "rsync", os.getenv("ODOO_IMAGES") + "/",
-        "/opt/robot/.odoo/images",
-        "-ar"
-    ])
-    subprocess.check_call("sudo chown -R robot /opt/robot", shell=True)
-
 if __name__ == "__main__":
-    fix_output_ownership()
     archive = Path("/tmp/archive")
     archive = base64.b64decode(archive.read_bytes())
     data = json.loads(archive)

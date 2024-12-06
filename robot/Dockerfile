@@ -31,6 +31,8 @@ RUN mv ./target/release/geckodriver /usr/local/bin/
 
 FROM ubuntu:22.04
 ARG TARGETARCH
+ARG OWNER_UID
+ARG WODOO_VERSION
 
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt update -q && \
@@ -56,7 +58,6 @@ apt install -y firefox
 #ADD install_geckodriver.sh .
 #RUN /bin/bash install_geckodriver.sh
 COPY --from=build_gecko /usr/local/bin/geckodriver /usr/local/bin
-ARG WODOO_VERSION
 
 # As this image cannot run in non-headless mode anyway, it's better to forcibly
 # enable it, regardless whether WebDriver client requests it in capabilities or
@@ -65,16 +66,18 @@ ENV MOZ_HEADLESS=1
 
 ENV WORKDIR=/opt/robot
 ENV ROBOT_THREADS 1
-ENV WORKDIR=/opt/robot
 
 WORKDIR $WORKDIR
 
-RUN useradd -rm -s /bin/bash -d /opt/robot -g root -G sudo -u 888 robot
+RUN userdel -r $(getent passwd $OWNER_UID | cut -d: -f1) || true
+RUN useradd -rm -s /bin/bash -d /opt/robot -g root -G sudo -u $OWNER_UID robot
 RUN echo 'robot ALL=NOPASSWD:SETENV: ALL' > /etc/sudoers.d/robot
 
 RUN apt update && apt install -y git ssh rsync
 RUN mkdir -p /opt/robot/.ssh && \
-chmod 500 /opt/robot/.ssh
+chmod 500 /opt/robot/.ssh  && \
+chown robot /opt/robot && \
+chown robot /opt/robot/.ssh -R 
 
 # -------------------------------------------
 # Setup Wodoo Framework
@@ -87,37 +90,35 @@ wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key a
 echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
 apt update && \
 apt -y install postgresql-14 libpq-dev
+
 # install docker cli
 RUN apt install -y ca-certificates curl gnupg lsb-release
 RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
 RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 RUN apt update
 RUN apt install docker-ce docker-ce-cli containerd.io -y
-
+RUN usermod -aG docker robot
 
 #--------------------------------------------
 
-RUN usermod -aG docker robot
-RUN apt update && \
-apt install -y pipx gosu && \
-chown robot /opt/robot -R
+RUN apt update && apt install -y pipx gosu
+
 USER robot
 ENV WODOO_VERSION=$WODOO_VERSION
 RUN \
 mkdir /opt/robot/.local/pipx -p && \
 pipx install wodoo==$WODOO_VERSION --force
 ENV PATH="$PATH:/opt/robot/.local/bin"
-RUN echo $PATH
+USER root
+RUN find /opt/robot -not -user robot -exec chown robot {} \;
+
 
 USER root
 COPY ssh_config /opt/robot/.ssh/config
-RUN chown robot /opt/robot/.ssh/config && \
-chmod 600 /opt/robot/.ssh/* && \
-chown -R robot /opt/robot
+RUN chown robot /opt/robot/.ssh/config  
 
 COPY robotest.py ./
 COPY entrypoint.sh ./
 RUN chmod a+x entrypoint.sh
 USER root
 ENTRYPOINT ["/opt/robot/entrypoint.sh"]
-
