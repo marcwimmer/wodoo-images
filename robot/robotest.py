@@ -253,10 +253,6 @@ def run_tests(params, test_files, token, results_file):
 
     results_file = output_dir / (results_file or 'results.json')
     results_file.write_text(json.dumps(test_results))
-    uid = os.environ["OWNER_UID"]
-    subprocess.check_call([
-        "find", output_dir.parent, '-not', '-uid', str(uid),
-        f'-exec', 'chown', str(uid), '{}', ';'])
     logger.info(f"Created output file at {results_file}")
 
 
