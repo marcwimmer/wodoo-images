@@ -6,7 +6,7 @@
     <menu id="root-menu" label="Openbox Menu">
         <item label="Terminal">
             <action name="Execute">
-                <command>xfce4-terminal</command>
+                <command>xterm -e "cd /opt/src; echo 'To run a test use: ';bash"</command>
             </action>
         </item>
         <item label="Web Browser">
@@ -17,12 +17,12 @@
         <separator />
         <item label="1024x768">
             <action name="Execute">
-                <command>xrandr --fb 1024x768</command>
+                <command>DISPLAY=:0. xrandr --fb 1024x768</command>
             </action>
         </item>
         <item label="1900x1080">
             <action name="Execute">
-                <command>xrandr --fb 1900x1080</command>
+                <command>DISPLAY=:0. xrandr --fb 1900x1080</command>
             </action>
         </item>
     </menu>

@@ -39,6 +39,7 @@ FROM ubuntu:22.04
 ARG TARGETARCH
 ARG OWNER_UID
 ARG WODOO_VERSION
+ARG DOCKER_GID
 
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt update -q && \
@@ -67,7 +68,7 @@ COPY --from=build_gecko /usr/local/bin/geckodriver /usr/local/bin
 
 
 ENV WORKDIR=/opt/robot
-ENV ROBOT_THREADS 1
+ENV ROBOT_THREADS=1
 
 WORKDIR $WORKDIR
 
@@ -111,6 +112,9 @@ RUN \
 	apt update && \
 	apt install docker-ce docker-ce-cli containerd.io -y && \
 	usermod -aG docker robot
+RUN groupmod -g 555 $(getent group $DOCKER_GID | cut -d: -f1) || true
+RUN groupmod -g $DOCKER_GID docker
+RUN usermod -aG docker robot
 
 #--------------------------------------------
 
@@ -163,6 +167,7 @@ ADD openbox/menu.xml  /opt/robot/.config/openbox/menu.xml
 
 # ###########################
 # Scripties
+RUN touch /opt/robot/.hushlogin
 COPY robotest.py ./
 COPY entrypoint.sh ./
 COPY entrypoint_standalone.sh ./
