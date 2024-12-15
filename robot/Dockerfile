@@ -17,6 +17,7 @@ WORKDIR /opt
 RUN RUSTUP_INIT_SKIP_PATH_CHECK=1 curl https://sh.rustup.rs -sSf | bash -s -- -y
 RUN apt update \
 	&& apt install gcc build-essential git cargo ca-certificates curl --no-install-recommends -y 
+RUN apt update && apt install -y x11-utils xorg
 
 RUN git clone https://github.com/mozilla/geckodriver.git && cd geckodriver \
 	&& git checkout v$GECKODRIVER_VERSION \
@@ -39,6 +40,7 @@ RUN apt update -q && \
 apt install -y wget unzip python3 \
 python3-pip python3-magic libmagickwand-dev xvfb \
 sudo curl software-properties-common pipx
+RUN apt update && apt install -y x11-utils xorg
 
 COPY ./requirements.txt /tmp/requirements.txt
 RUN python3 -mpip install pip -U
@@ -117,8 +119,13 @@ USER root
 COPY ssh_config /opt/robot/.ssh/config
 RUN chown robot /opt/robot/.ssh/config  
 
+RUN apt install -y firefox
+RUN apt install -y gpg x11vnc xvfb xauth git gosu net-tools rsync
+RUN apt install -y x11-apps python3-pip python3-venv fluxbox xdotool
+
 COPY robotest.py ./
 COPY entrypoint.sh ./
-RUN chmod a+x entrypoint.sh
+COPY entrypoint_standalone.sh ./
+RUN chmod a+x entrypoint*.sh
 USER root
 ENTRYPOINT ["/opt/robot/entrypoint.sh"]

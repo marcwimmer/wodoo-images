@@ -1,0 +1,150 @@
+#!/bin/bash
+
+set -e  # Exit immediately on error
+set -x  # Enable debug output
+
+# Constants and Environment Variables
+USERNAME=robot
+export DISPLAY=:0.0
+USER_HOME=/opt/robot
+TEMP_XAUTH="/tmp/.Xauthority-$USERNAME"
+HOST_SRC_PATH=${CUSTOMS_DIR}
+
+# Step 2: Fix File Ownership
+echo "Fixing possible wrong user rights"
+for path in /opt/src /opt/robot/.odoo /opt/robot/.odoo/images; do
+  find "$path" -not -user robot -exec chown robot {} +
+done
+echo "Finished fixing possible missed ownerships"
+
+# Step 3: Check DEVMODE and Environment Variables
+if [[ "$DEVMODE" != "1" ]]; then
+  echo "DEVMODE is not set"
+  exit 0
+fi
+
+if [[ -z $HOST_SRC_PATH ]]; then
+  echo "Please set the environment variable HOST_SRC_PATH"
+  exit 1
+fi
+
+DISPLAY=:0.0
+export DISPLAY
+
+
+# Step 4: Clean Temporary Files
+killall vscode || true
+killall xvfb || true
+killall x11vnc || true
+
+rm -rf /tmp/.*lock /tmp/*lock /tmp/.*X11* /tmp/*vscode* /tmp/.X11-unix
+ls /tmp -lhtra
+
+# Step 5: Set Up X Authority
+COOKIE=$(mcookie)
+[[ -f $TEMP_XAUTH ]] && rm "$TEMP_XAUTH"
+[[ -f $USER_HOME/.Xauthority ]] && rm $USER_HOME/.Xauthority
+
+xauth -f $TEMP_XAUTH add $DISPLAY . $COOKIE
+mv $TEMP_XAUTH $USER_HOME/.Xauthority
+chown $USERNAME $USER_HOME/.Xauthority
+
+cp $USER_HOME/.Xauthority /root/.Xauthority
+chown root:root /root/.Xauthority
+
+# TODO
+# rsync -ar "$USER_HOME/.vnc/" /root/.vnc/
+
+# Step 6: Start Xvfb and x11vnc
+Xvfb $DISPLAY -screen 0 "${DISPLAY_WIDTH}x${DISPLAY_HEIGHT}x${DISPLAY_COLOR}" &
+# TODO
+  # -ncache 10 \
+	# -ncache_cr \
+/usr/bin/x11vnc -display "$DISPLAY" -auth guess \
+  -forever \
+  -rfbport 5900 \
+  -noxdamage \
+  -nopw \
+  -shared \
+  -scale "${DISPLAY_WIDTH}x${DISPLAY_HEIGHT}" \
+  &
+
+xhost +local: &
+
+# Step 7: Configure Environment Variables and Aliases
+cat <<EOL > /tmp/envvars.sh
+export project_name=$project_name
+export CUSTOMS_DIR=$CUSTOMS_DIR
+EOL
+
+echo "alias odoo=\"$USER_HOME/.local/bin/odoo --project-name=$project_name\"" >> "$USER_HOME/.bash_aliases"
+
+# Step 8: Configure Fluxbox Startup
+mkdir -p "$USER_HOME/.fluxbox"
+STARTUPFILE_FLUXBOX="$USER_HOME/.fluxbox/startup"
+echo '#!/bin/bash' > $STARTUPFILE_FLUXBOX
+echo 'sleep 5' >> $STARTUPFILE_FLUXBOX
+echo "DISPLAY=$DISPLAY /usr/bin/code '$HOST_SRC_PATH' &" >> $STARTUPFILE_FLUXBOX
+chown $USERNAME $USER_HOME -R
+chmod a+x $STARTUPFILE_FLUXBOX
+gosu $USERNAME fluxbox &
+
+
+# Step: install code
+
+RUN python3 <<'EOF'
+
+import os
+from pathlib import Path
+downloadlink = Path("/tmp/downloadlink")
+# link = ("https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-")
+link = "https://artefacts.zebroo.de/simplicissimus_agatha_christie/code-"
+if os.getenv("TARGETARCH") == "amd64": 
+   link += "x64"
+else:
+    link += os.getenv("TARGETARCH")
+downloadlink.write_text(link)
+EOF
+
+RUN echo "Download link: $(cat /tmp/downloadlink)"
+RUN apt install -y wget
+RUN wget -O /tmp/vscode.deb "$(cat /tmp/downloadlink)"
+
+RUN apt install -y /tmp/vscode.deb
+RUN apt update && apt upgrade -y
+
+
+# Step 9: Fix Ownership Recursively
+# chown -R $USERNAME /home/user1/.odoo
+
+# Step 10: Configure Git (Optional)
+# cd "$HOST_SRC_PATH"
+# if [[ -n $GIT_USERNAME && -n $GIT_EMAIL ]]; then
+#   git config --global user.email "$GIT_EMAIL"
+#   git config --global user.name "$GIT_USERNAME"
+# fi
+
+# if [[ -n $REPO_URL ]]; then
+#   git remote set-url origin "$REPO_URL"
+# fi
+
+# if [[ -n $REPO_KEY ]]; then
+#   mkdir -p "$USER_HOME/.ssh"
+#   echo "$REPO_KEY" | base64 -d >> "$USER_HOME/.ssh/id_rsa"
+#   chown -R $USERNAME:$USERNAME "$USER_HOME/.ssh"
+#   chmod 500 "$USER_HOME/.ssh"
+#   chmod 400 "$USER_HOME/.ssh/id_rsa"
+# fi
+
+# echo "Git user is $GIT_USERNAME"
+
+# Step 11: Launch Visual Studio Code
+#gosu $USERNAME bash -c "DISPLAY=$DISPLAY /usr/bin/code /opt/src
+#gosu $USERNAME bash -c "DISPLAY=$DISPLAY /usr/bin/firefox
+sleep 2
+
+#WINDOW_ID=$(DISPLAY="$DISPLAY" xdotool getactivewindow)
+#xdotool windowactivate --sync "$WINDOW_ID" key --clearmodifiers alt+F10
+
+# Keep the script running
+sleep infinity

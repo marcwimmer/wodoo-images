@@ -48,6 +48,8 @@ Xvfb $DISPLAY -screen 0 "${DISPLAY_WIDTH}x${DISPLAY_HEIGHT}x${DISPLAY_COLOR}" &
 	-forever \
 	-rfbport 5900 \
 	-noxdamage \
+	-ncache 10 \
+	-ncache_cr \
 	-nopw \
 	-shared \
 	-scale "${DISPLAY_WIDTH}x${DISPLAY_HEIGHT}" \
