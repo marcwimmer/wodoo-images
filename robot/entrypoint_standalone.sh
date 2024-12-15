@@ -5,10 +5,14 @@ set -x  # Enable debug output
 
 # Constants and Environment Variables
 USERNAME=robot
-export DISPLAY=:0.0
+export DISPLAY=:0
 USER_HOME=/opt/robot
 TEMP_XAUTH="/tmp/.Xauthority-$USERNAME"
 HOST_SRC_PATH=${CUSTOMS_DIR}
+
+export MOZ_DISABLE_RDD_SANDBOX=1
+export MOZ_HEADLESS=0
+export LIBGL_ALWAYS_SOFTWARE=1
 
 # Step 2: Fix File Ownership
 echo "Fixing possible wrong user rights"
@@ -27,10 +31,6 @@ if [[ -z $HOST_SRC_PATH ]]; then
   echo "Please set the environment variable HOST_SRC_PATH"
   exit 1
 fi
-
-DISPLAY=:0.0
-export DISPLAY
-
 
 # Step 4: Clean Temporary Files
 killall vscode || true
@@ -52,22 +52,19 @@ chown $USERNAME $USER_HOME/.Xauthority
 cp $USER_HOME/.Xauthority /root/.Xauthority
 chown root:root /root/.Xauthority
 
-# TODO
-# rsync -ar "$USER_HOME/.vnc/" /root/.vnc/
-
 # Step 6: Start Xvfb and x11vnc
 Xvfb $DISPLAY -screen 0 "${DISPLAY_WIDTH}x${DISPLAY_HEIGHT}x${DISPLAY_COLOR}" &
-# TODO
-  # -ncache 10 \
-	# -ncache_cr \
-/usr/bin/x11vnc -display "$DISPLAY" -auth guess \
+/usr/bin/x11vnc \
+  -display "$DISPLAY" \
+  -auth guess \
   -forever \
   -rfbport 5900 \
   -noxdamage \
   -nopw \
   -shared \
-  -scale "${DISPLAY_WIDTH}x${DISPLAY_HEIGHT}" \
-  &
+  -ncache 10 \
+	-ncache_cr \
+  -scale "${DISPLAY_WIDTH}x${DISPLAY_HEIGHT}" &
 
 xhost +local: &
 
@@ -84,35 +81,14 @@ mkdir -p "$USER_HOME/.fluxbox"
 STARTUPFILE_FLUXBOX="$USER_HOME/.fluxbox/startup"
 echo '#!/bin/bash' > $STARTUPFILE_FLUXBOX
 echo 'sleep 5' >> $STARTUPFILE_FLUXBOX
-echo "DISPLAY=$DISPLAY /usr/bin/code '$HOST_SRC_PATH' &" >> $STARTUPFILE_FLUXBOX
-chown $USERNAME $USER_HOME -R
+# TODO
+# echo "DISPLAY=$DISPLAY /usr/bin/code '$HOST_SRC_PATH' &" >> $STARTUPFILE_FLUXBOX
+chown $USERNAME $USER_HOME
 chmod a+x $STARTUPFILE_FLUXBOX
-gosu $USERNAME fluxbox &
-
-
-# Step: install code
-
-RUN python3 <<'EOF'
-
-import os
-from pathlib import Path
-downloadlink = Path("/tmp/downloadlink")
-# link = ("https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-")
-link = "https://artefacts.zebroo.de/simplicissimus_agatha_christie/code-"
-if os.getenv("TARGETARCH") == "amd64": 
-   link += "x64"
-else:
-    link += os.getenv("TARGETARCH")
-downloadlink.write_text(link)
-EOF
-
-RUN echo "Download link: $(cat /tmp/downloadlink)"
-RUN apt install -y wget
-RUN wget -O /tmp/vscode.deb "$(cat /tmp/downloadlink)"
-
-RUN apt install -y /tmp/vscode.deb
-RUN apt update && apt upgrade -y
-
+# DISPLAY="$DISPLAY" gosu $USERNAME fluxbox &
+DISPLAY="$DISPLAY" gosu $USERNAME openbox &
+# DISPLAY="$DISPLAY" openbox &
+# DISPLAY="$DISPLAY" fluxbox & 
 
 # Step 9: Fix Ownership Recursively
 # chown -R $USERNAME /home/user1/.odoo
@@ -141,7 +117,7 @@ RUN apt update && apt upgrade -y
 # Step 11: Launch Visual Studio Code
 #gosu $USERNAME bash -c "DISPLAY=$DISPLAY /usr/bin/code /opt/src
 #gosu $USERNAME bash -c "DISPLAY=$DISPLAY /usr/bin/firefox
-sleep 2
+# sleep 2
 
 #WINDOW_ID=$(DISPLAY="$DISPLAY" xdotool getactivewindow)
 #xdotool windowactivate --sync "$WINDOW_ID" key --clearmodifiers alt+F10

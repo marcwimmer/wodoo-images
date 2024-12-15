@@ -30,6 +30,10 @@ RUN cargo build --release
 RUN mv ./target/release/geckodriver /usr/local/bin/
 
 
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# ----------------------------------------------------------------------------------------
+
+
 FROM ubuntu:22.04
 ARG TARGETARCH
 ARG OWNER_UID
@@ -123,6 +127,55 @@ RUN apt install -y firefox
 RUN apt install -y gpg x11vnc xvfb xauth git gosu net-tools rsync
 RUN apt install -y x11-apps python3-pip python3-venv fluxbox xdotool
 
+
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# INSTALL CODE
+RUN apt update && apt install -y curl
+RUN apt install -y gpg x11vnc xvfb xauth git gosu net-tools rsync
+RUN python3 <<'EOF'
+
+import os
+from pathlib import Path
+downloadlink = Path("/tmp/downloadlink")
+# link = ("https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-")
+link = "https://artefacts.zebroo.de/simplicissimus_agatha_christie/code-"
+if os.getenv("TARGETARCH") == "amd64": 
+   link += "x64"
+else:
+    link += os.getenv("TARGETARCH")
+downloadlink.write_text(link)
+EOF
+
+RUN echo "Download link: $(cat /tmp/downloadlink)"
+RUN apt install -y wget
+RUN wget -O /tmp/vscode.deb "$(cat /tmp/downloadlink)"
+
+RUN apt install -y /tmp/vscode.deb
+# ADD some extensions here
+RUN  /usr/bin/code --install-extension ms-python.python || true
+RUN /usr/bin/code --install-extension robocorp.robotframework-lsp || true
+RUN /usr/bin/code --install-extension vscodevim.vim || true
+RUN /usr/bin/code --install-extension MarcWimmerITE.odoobrowserITE || true
+
+# INSTALL CODE END
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+RUN apt install -y openbox
+
+ADD openbox/menu.xml  ~/.config/openbox/menu.xml
+
+RUN apt update && apt install -y \
+    firefox-esr \
+    xvfb \
+    x11-utils \
+    x11-xserver-utils \
+    mesa-utils \
+    libgl1-mesa-dri \
+    fonts-dejavu-core
+RUN apt install -y fonts-dejavu-core fonts-liberation
+RUN apt install -y x11-utils x11-xserver-utils mesa-utils libpci3
+# ###########################
+# Scripties
 COPY robotest.py ./
 COPY entrypoint.sh ./
 COPY entrypoint_standalone.sh ./

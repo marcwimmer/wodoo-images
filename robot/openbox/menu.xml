@@ -1,0 +1,5 @@
+<item label="Run Custom Command">
+    <action name="Execute">
+        <command>xfce4-terminal</command>
+    </action>
+</item>
