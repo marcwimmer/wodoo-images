@@ -1,43 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <openbox_config xmlns="http://openbox.org/3.4/rc">
     <!-- Theme configuration -->
     <theme>
         <name>Clearlooks</name>
         <titleLayout>LIMC</titleLayout>
     </theme>
-
     <!-- Mouse bindings (disable all menus) -->
     <mouse>
-		<context name="Desktop">
+        <context name="Desktop">
             <mousebind button="Right" action="Press">
                 <action name="ShowMenu">
                     <menu>root-menu</menu>
                 </action>
             </mousebind>
         </context>
-        <!-- <context name="Desktop"> -->
-            <!-- No desktop menu -->
-        <!-- </context> -->
-        <context name="Frame">
-            <!-- No right-click menu on window frame -->
-        </context>
-        <!-- <context name="Titlebar"> -->
-            <!-- No right-click menu on window titlebar -->
-        <!-- </context> -->
         <context name="Icon">
             <!-- No menu on minimized icons -->
         </context>
         <context name="AllDesktops">
             <!-- No menu for desktop switching -->
         </context>
+        <context name="Frame">
+            <mousebind button="Right" action="Drag">
+                <action name="Resize"/>
+            </mousebind>
+        </context>
     </mouse>
-
     <!-- Key bindings (disable all menu-related keys) -->
     <keyboard>
         <!-- Leave this empty to disable all keybindings -->
     </keyboard>
-
     <!-- Desktops configuration -->
     <desktops>
         <number>1</number>
@@ -47,7 +39,6 @@
         </names>
         <popupTime>0</popupTime>
     </desktops>
-
     <!-- Focus model -->
     <focus>
         <focusNew>yes</focusNew>
@@ -55,25 +46,21 @@
         <focusLast>yes</focusLast>
         <underMouse>no</underMouse>
     </focus>
-
     <!-- Placement policy -->
     <placement>
         <policy>Smart</policy>
         <center>yes</center>
     </placement>
-
     <!-- No dock or menu-related features -->
     <dock>
         <position>Bottom</position>
         <noStrut>no</noStrut>
     </dock>
-
     <!-- Disable edge snapping -->
     <resize>
         <drawContents>yes</drawContents>
         <popupShow>yes</popupShow>
     </resize>
-
     <!-- No menu-related features -->
     <menu>
         <file>/opt/robot/.config/openbox/menu.xml</file>

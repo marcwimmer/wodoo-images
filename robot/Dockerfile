@@ -165,6 +165,7 @@ RUN /usr/bin/code --install-extension MarcWimmerITE.odoobrowserITE || true
 ADD openbox/rc.xml  /opt/robot/.config/openbox/rc.xml
 ADD openbox/menu.xml  /opt/robot/.config/openbox/menu.xml
 
+
 # ###########################
 # Scripties
 RUN touch /opt/robot/.hushlogin

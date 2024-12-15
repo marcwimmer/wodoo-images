@@ -74,42 +74,13 @@ export project_name=$project_name
 export CUSTOMS_DIR=$CUSTOMS_DIR
 EOL
 
-echo "alias odoo=\"$USER_HOME/.local/bin/odoo --project-name=$project_name\"" >> "$USER_HOME/.bash_aliases"
+echo "alias odoo=\"$USER_HOME/.local/bin/odoo --project-name=$project_name\"" >> "$USER_HOME/.bashrc"
+echo 'eval "$(_ODOO_COMPLETE=bash_source odoo)"' >> "$USER_HOME/.bashrc"
 
-# Step 8: Configure Fluxbox Startup
+chmod a+x "$USER_HOME/.bashrc"
+chown $USERNAME "$USER_HOME/.bashrc"
+
+# Step 8: Configure Openbox Startup
 DISPLAY="$DISPLAY" gosu $USERNAME openbox &
 
-# Step 9: Fix Ownership Recursively
-# chown -R $USERNAME /home/user1/.odoo
-
-# Step 10: Configure Git (Optional)
-# cd "$HOST_SRC_PATH"
-# if [[ -n $GIT_USERNAME && -n $GIT_EMAIL ]]; then
-#   git config --global user.email "$GIT_EMAIL"
-#   git config --global user.name "$GIT_USERNAME"
-# fi
-
-# if [[ -n $REPO_URL ]]; then
-#   git remote set-url origin "$REPO_URL"
-# fi
-
-# if [[ -n $REPO_KEY ]]; then
-#   mkdir -p "$USER_HOME/.ssh"
-#   echo "$REPO_KEY" | base64 -d >> "$USER_HOME/.ssh/id_rsa"
-#   chown -R $USERNAME:$USERNAME "$USER_HOME/.ssh"
-#   chmod 500 "$USER_HOME/.ssh"
-#   chmod 400 "$USER_HOME/.ssh/id_rsa"
-# fi
-
-# echo "Git user is $GIT_USERNAME"
-
-# Step 11: Launch Visual Studio Code
-#gosu $USERNAME bash -c "DISPLAY=$DISPLAY /usr/bin/code /opt/src
-#gosu $USERNAME bash -c "DISPLAY=$DISPLAY /usr/bin/firefox
-# sleep 2
-
-#WINDOW_ID=$(DISPLAY="$DISPLAY" xdotool getactivewindow)
-#xdotool windowactivate --sync "$WINDOW_ID" key --clearmodifiers alt+F10
-
-# Keep the script running
 sleep infinity

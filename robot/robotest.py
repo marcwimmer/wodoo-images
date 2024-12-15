@@ -135,6 +135,7 @@ def _run_test(
         cmd = _get_cmd(dryrun=False)
 
         try:
+            raise Exception(cmd)
             subprocess.run(cmd, check=True, encoding="utf8", cwd=test_file.parent)
         except subprocess.CalledProcessError:
             success = False
@@ -261,7 +262,7 @@ def smoketestselenium():
     from selenium.webdriver import FirefoxOptions
 
     opts = FirefoxOptions()
-    opts.add_argument("--headless")
+    # opts.add_argument("--headless")
     try:
         browser = webdriver.Firefox(options=opts)
     except:
