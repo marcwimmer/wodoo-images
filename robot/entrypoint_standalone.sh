@@ -77,18 +77,7 @@ EOL
 echo "alias odoo=\"$USER_HOME/.local/bin/odoo --project-name=$project_name\"" >> "$USER_HOME/.bash_aliases"
 
 # Step 8: Configure Fluxbox Startup
-mkdir -p "$USER_HOME/.fluxbox"
-STARTUPFILE_FLUXBOX="$USER_HOME/.fluxbox/startup"
-echo '#!/bin/bash' > $STARTUPFILE_FLUXBOX
-echo 'sleep 5' >> $STARTUPFILE_FLUXBOX
-# TODO
-# echo "DISPLAY=$DISPLAY /usr/bin/code '$HOST_SRC_PATH' &" >> $STARTUPFILE_FLUXBOX
-chown $USERNAME $USER_HOME
-chmod a+x $STARTUPFILE_FLUXBOX
-# DISPLAY="$DISPLAY" gosu $USERNAME fluxbox &
 DISPLAY="$DISPLAY" gosu $USERNAME openbox &
-# DISPLAY="$DISPLAY" openbox &
-# DISPLAY="$DISPLAY" fluxbox & 
 
 # Step 9: Fix Ownership Recursively
 # chown -R $USERNAME /home/user1/.odoo

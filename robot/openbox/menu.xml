@@ -1,5 +1,29 @@
-<item label="Run Custom Command">
-    <action name="Execute">
-        <command>xfce4-terminal</command>
-    </action>
-</item>
+<?xml version="1.0" encoding="UTF-8"?>
+<openbox_menu xmlns="http://openbox.org/"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://openbox.org/
+              file:///usr/share/openbox/menu.xsd">
+    <menu id="root-menu" label="Openbox Menu">
+        <item label="Terminal">
+            <action name="Execute">
+                <command>xfce4-terminal</command>
+            </action>
+        </item>
+        <item label="Web Browser">
+            <action name="Execute">
+                <command>firefox</command>
+            </action>
+        </item>
+        <separator />
+        <item label="1024x768">
+            <action name="Execute">
+                <command>xrandr --fb 1024x768</command>
+            </action>
+        </item>
+        <item label="1900x1080">
+            <action name="Execute">
+                <command>xrandr --fb 1900x1080</command>
+            </action>
+        </item>
+    </menu>
+</openbox_menu>
