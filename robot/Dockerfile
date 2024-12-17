@@ -144,6 +144,7 @@ RUN chown robot /opt/robot/.ssh/config
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # INSTALL CODE
 RUN python3 <<'EOF'
+# V3
 
 import os
 from pathlib import Path
@@ -163,10 +164,12 @@ RUN wget -O /tmp/vscode.deb "$(cat /tmp/downloadlink)"
 
 RUN apt install -y /tmp/vscode.deb
 # ADD some extensions here
+USER robot
 RUN /usr/bin/code --install-extension ms-python.python || true
 RUN /usr/bin/code --install-extension robocorp.robotframework-lsp || true
 RUN /usr/bin/code --install-extension vscodevim.vim || true
 RUN /usr/bin/code --install-extension MarcWimmerITE.odoobrowserITE || true
+USER root
 
 # INSTALL CODE END
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
