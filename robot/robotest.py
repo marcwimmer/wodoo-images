@@ -300,6 +300,7 @@ if __name__ == "__main__":
 
     if args.headless:
         # if not headless - user sees everything - then this nerves
+        os.environ['MOZ_HEADLESS'] = '1'
         smoketestselenium()
 
     run_tests(**data)

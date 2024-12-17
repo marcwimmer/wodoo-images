@@ -17,6 +17,8 @@ services:
             OWNER_UID: ${OWNER_UID}
             ODOO_HOME: /opt/src
             ODOO_CMD: /opt/robot/.local/pipx/venvs/wodoo/bin/odoo
+            BROWSER_WIDTH: 1024
+            BROWSER_HEIGHT: 768
         profiles:
             - auto
         extra_hosts:
@@ -83,6 +85,8 @@ services:
             DISPLAY_HEIGHT: ${VSCODE_HEIGHT}
             DISPLAY_COLOR: ${VSCODE_COLOR}
             DEBUG_SOCKET: /tmp/debug_socket/socket
+            BROWSER_WIDTH: 1024
+            BROWSER_HEIGHT: 768
         profiles:
             - manual
         extra_hosts:
