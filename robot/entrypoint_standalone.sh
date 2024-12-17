@@ -5,13 +5,11 @@ set -x  # Enable debug output
 
 # Constants and Environment Variables
 USERNAME=robot
-export DISPLAY=:0
 USER_HOME=/opt/robot
 TEMP_XAUTH="/tmp/.Xauthority-$USERNAME"
 HOST_SRC_PATH=${CUSTOMS_DIR}
 
 export MOZ_DISABLE_RDD_SANDBOX=1
-export MOZ_HEADLESS=0
 export LIBGL_ALWAYS_SOFTWARE=1
 
 # Step 2: Fix File Ownership
@@ -53,8 +51,8 @@ cp $USER_HOME/.Xauthority /root/.Xauthority
 chown root:root /root/.Xauthority
 
 # Step 6: Start Xvfb and x11vnc
-Xvfb $DISPLAY -screen 0 "${DISPLAY_WIDTH}x${DISPLAY_HEIGHT}x${DISPLAY_COLOR}" &
-/usr/bin/x11vnc \
+gosu $USERNAME Xvfb $DISPLAY -screen 0 "${DISPLAY_WIDTH}x${DISPLAY_HEIGHT}x${DISPLAY_COLOR}" &
+gosu $USERNAME /usr/bin/x11vnc \
   -display "$DISPLAY" \
   -auth guess \
   -forever \
@@ -82,5 +80,8 @@ chown $USERNAME "$USER_HOME/.bashrc"
 
 # Step 8: Configure Openbox Startup
 DISPLAY="$DISPLAY" gosu $USERNAME openbox &
+
+mkdir /opt/robot/.vscode
+sudo chown robot /opt/robot/.config /opt/robot/.vscode -R
 
 sleep infinity

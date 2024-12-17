@@ -6,7 +6,7 @@
     <menu id="root-menu" label="Openbox Menu">
         <item label="Terminal">
             <action name="Execute">
-                <command>xterm -e "cd /opt/src; echo 'To run a test use: ';bash"</command>
+                <command>xterm -e "cd $CUSTOMS_DIR; echo 'To run a test use: ';bash"</command>
             </action>
         </item>
         <item label="Web Browser">

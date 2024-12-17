@@ -113,6 +113,7 @@ RUN \
 	apt install docker-ce docker-ce-cli containerd.io -y && \
 	usermod -aG docker robot
 RUN groupmod -g 555 $(getent group $DOCKER_GID | cut -d: -f1) || true
+RUN cat /etc/group
 RUN groupmod -g $DOCKER_GID docker
 RUN usermod -aG docker robot
 
@@ -123,6 +124,7 @@ ENV WODOO_VERSION=$WODOO_VERSION
 RUN \
 mkdir /opt/robot/.local/pipx -p && \
 pipx install wodoo==$WODOO_VERSION --force
+RUN pip install debugpy pudb
 ENV PATH="$PATH:/opt/robot/.local/bin"
 USER root
 

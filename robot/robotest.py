@@ -135,7 +135,6 @@ def _run_test(
         cmd = _get_cmd(dryrun=False)
 
         try:
-            raise Exception(cmd)
             subprocess.run(cmd, check=True, encoding="utf8", cwd=test_file.parent)
         except subprocess.CalledProcessError:
             success = False
@@ -146,10 +145,13 @@ def _run_test(
         results[index]["duration"] = (arrow.utcnow() - started).total_seconds()
 
     logger.info("Preparing threads")
-    for i in range(parallel):
-        t = threading.Thread(target=run_robot, args=((i,)))
-        t.daemon = True
-        threads.append(t)
+    if parallel == 1:
+        run_robot(0)
+    else:
+        for i in range(parallel):
+            t = threading.Thread(target=run_robot, args=((i,)))
+            t.daemon = True
+            threads.append(t)
     [x.start() for x in threads]  # pylint: disable=W0106
     [x.join() for x in threads]  # pylint: disable=W0106
 
@@ -262,6 +264,7 @@ def smoketestselenium():
     from selenium.webdriver import FirefoxOptions
 
     opts = FirefoxOptions()
+    # TODO
     # opts.add_argument("--headless")
     try:
         browser = webdriver.Firefox(options=opts)
@@ -269,8 +272,8 @@ def smoketestselenium():
         log = Path('geckodriver.log')
         if log.exists():
             raise Exception(log.read_text())
-
-    # browser.get("http://example.com")
+    else:
+        browser.close()
 
 
 def _clean_dir(path):
@@ -281,6 +284,9 @@ def _clean_dir(path):
             file.unlink()
 
 if __name__ == "__main__":
+    # TODO harcoded
+    os.environ['DISPLAY'] = ":0"
+    os.environ['IS_COBOT_CONTAINER'] = "1"
     archive = Path("/tmp/archive")
     archive = base64.b64decode(archive.read_bytes())
     data = json.loads(archive)

@@ -6,6 +6,7 @@ services:
             args:
                 WODOO_VERSION: $WODOO_VERSION
                 OWNER_UID: ${OWNER_UID}
+                DOCKER_GID: ${DOCKER_GID}
         cap_add:
           # required by vscode
           - SYS_ADMIN
@@ -33,14 +34,14 @@ services:
             - /var/run/docker.sock:/var/run/docker.sock
             - /var/lib/docker:/var/lib/docker
 
-    novnc_robot:
+    novnc_cobot:
         build:
           context: $ODOO_IMAGES/novnc
           args:
             relpathname: vnccobot
         restart: "unless-stopped"
         profiles:
-          - auto
+          - manual
         links:
             - cobot
         volumes:
@@ -73,6 +74,8 @@ services:
         entrypoint: ["/opt/robot/entrypoint_standalone.sh"]
         privileged: true
         environment:
+            IS_COBOT_CONTAINER: 1
+            DISPLAY: :0
             OUTPUT_DIR: /opt/output
             OWNER_UID: ${OWNER_UID}
             ODOO_HOME: /opt/src
@@ -80,11 +83,15 @@ services:
             DISPLAY_WIDTH: ${VSCODE_WIDTH}
             DISPLAY_HEIGHT: ${VSCODE_HEIGHT}
             DISPLAY_COLOR: ${VSCODE_COLOR}
+            DEBUG_SOCKET: /tmp/debug_socket/socket
         profiles:
-            - auto
+            - manual
         extra_hosts:
             - "host.docker.internal:host-gateway"
+        ports:
+            - 5678:5678
         volumes:
+            - ${HOST_RUN_DIR}/robot/cobot/debug:/tmp/debug_socket/
             - ${HOST_RUN_DIR}/odoo_outdir/robot_output:/opt/output
             - ${ODOO_IMAGES}/robot/robotest.py:/opt/robot/robotest.py
             - ${ODOO_IMAGES}/robot/keywords:/opt/robot/keywords
@@ -96,6 +103,8 @@ services:
             - "${ODOO_IMAGES}:$ODOO_IMAGES"
             - /var/run/docker.sock:/var/run/docker.sock
             - /var/lib/docker:/var/lib/docker
+            # TODO
+            - /home/parallels/projects/wodoo:/home/parallels/projects/wodoo
 
 
 

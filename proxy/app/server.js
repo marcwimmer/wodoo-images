@@ -11,7 +11,7 @@ const fastifyExpress = require('@fastify/express');
 
 
 const vncvscode = "http://novnc_vscode:6080";
-const vncrobotstandalone = "http://novnc_robot:6080";
+const vncrobotstandalone = "http://novnc_cobot:6080";
 
 const server_odoo = {
     protocol: 'http',
