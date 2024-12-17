@@ -75,7 +75,7 @@ def _run_test(
         "ODOO_DB": dbname,
         "ODOO_VERSION": odoo_version,
         "BROWSER": browser["alias"],
-        "BROWSER_HEADLESS": run_parameters['headless'],
+        "BROWSER_HEADLESS": '1' if run_parameters['headless'] else '0',
         "ALIAS": browser["alias"],
         "DRIVER": browser["driver"],
     }
