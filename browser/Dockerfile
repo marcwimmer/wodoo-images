@@ -7,7 +7,7 @@
 # Pull base image.
 FROM ubuntu:18.04
 
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 
 # Install Chromium.
 RUN \

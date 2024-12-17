@@ -1,6 +1,6 @@
 FROM    ubuntu:20.04
-ENV     DEBIAN_FRONTEND noninteractive
-ENV     TERM xterm
+ENV     DEBIAN_FRONTEND=noninteractive
+ENV     TERM=xterm
 ENV     ROUNDCUBE_VERSION=1.6.0
 ENV     MAIL_SERVER=mail
 MAINTAINER Round Cube <rc@xxx.org>

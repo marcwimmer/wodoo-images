@@ -11,6 +11,7 @@ const fastifyExpress = require('@fastify/express');
 
 
 const vncvscode = "http://novnc_vscode:6080";
+const vncrobotstandalone = "http://novnc_cobot:6080";
 
 const server_odoo = {
     protocol: 'http',
@@ -74,6 +75,14 @@ fastify.register(require('@fastify/http-proxy'), {
 });
 if (process.env.DEVMODE === "1") {
     fastify.register(require('@fastify/http-proxy'), {
+        upstream: vncrobotstandalone,
+        prefix: '/cobot',
+        preHandler: (req, reply, next) => {
+            reply.redirect("/vnccobot/vnc.html?autoconnect=true&path=vnccobot?token=cobot");
+            next();
+        },
+    });
+    fastify.register(require('@fastify/http-proxy'), {
         upstream: vncvscode,
         prefix: '/code',
         preHandler: (req, reply, next) => {
@@ -84,6 +93,12 @@ if (process.env.DEVMODE === "1") {
     fastify.register(require('@fastify/http-proxy'), {
         upstream: vncvscode,
         prefix: '/vscode',
+        rewritePrefix: '/',
+        websocket: true,
+    });
+    fastify.register(require('@fastify/http-proxy'), {
+        upstream: vncrobotstandalone,
+        prefix: '/vnccobot',
         rewritePrefix: '/',
         websocket: true,
     });

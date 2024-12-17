@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openbox_menu xmlns="http://openbox.org/"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://openbox.org/
+              file:///usr/share/openbox/menu.xsd">
+    <menu id="root-menu" label="Openbox Menu">
+        <item label="Terminal">
+            <action name="Execute">
+                <command>xterm -e "cat /etc/welcome.txt; cd $CUSTOMS_DIR; bash"</command>
+            </action>
+        </item>
+        <item label="Web Browser">
+            <action name="Execute">
+                <command>firefox</command>
+            </action>
+        </item>
+        <item label="VSCode">
+            <action name="Execute">
+                <command>sh -c 'code "$CUSTOMS_DIR"'</command>
+            </action>
+        </item>
+        <item label="Install Wodoo Editable">
+            <action name="Execute">
+                <command>pipx install -e /home/parallels/projects/wodoo --force</command>
+            </action>
+        </item>
+        <separator />
+        <item label="1024x768">
+            <action name="Execute">
+                <command>DISPLAY=:0. xrandr --fb 1024x768</command>
+            </action>
+        </item>
+        <item label="1900x1080">
+            <action name="Execute">
+                <command>DISPLAY=:0. xrandr --fb 1900x1080</command>
+            </action>
+        </item>
+    </menu>
+</openbox_menu>

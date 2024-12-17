@@ -1,7 +1,6 @@
 # pylint: disable=import-outside-toplevel
 import base64
 from copy import deepcopy
-import robot
 import shutil
 import os
 import arrow
@@ -23,11 +22,11 @@ logger = logging.getLogger("")  # root handler
 Browsers = {
     "chrome": {
         "driver": "Chrome",
-        "alias": "headlesschrome",
+        "alias": "chrome",
     },
     "firefox": {
         "driver": "Firefox",
-        "alias": "headlessfirefox",
+        "alias": "firefox",
     },
 }
 
@@ -36,7 +35,6 @@ def safe_filename(name):
     for c in ":_- \\/!?#$%&*":
         name = name.replace(c, "_")
     return name
-
 
 
 def safe_avg(values):
@@ -54,14 +52,14 @@ def _run_test(
     dbname,
     user,
     password,
-    browser="firefox",
+    browser,
     selenium_timeout=20,
     parallel=1,
     tags=None,
     odoo_version=None,
     **run_parameters,
 ):
-    assert browser in Browsers
+    assert browser in Browsers, f"Invalid browser {browser} - not in {Browsers.keys()}"
     browser = Browsers[browser]
 
     if password is True:
@@ -77,6 +75,7 @@ def _run_test(
         "ODOO_DB": dbname,
         "ODOO_VERSION": odoo_version,
         "BROWSER": browser["alias"],
+        "BROWSER_HEADLESS": '1' if run_parameters['headless'] else '0',
         "ALIAS": browser["alias"],
         "DRIVER": browser["driver"],
     }
@@ -144,11 +143,14 @@ def _run_test(
         results[index]["ok"] = success
         results[index]["duration"] = (arrow.utcnow() - started).total_seconds()
 
-    logger.info("Preparing threads")
-    for i in range(parallel):
-        t = threading.Thread(target=run_robot, args=((i,)))
-        t.daemon = True
-        threads.append(t)
+    if parallel == 1:
+        run_robot(0)
+    else:
+        logger.info("Preparing threads")
+        for i in range(parallel):
+            t = threading.Thread(target=run_robot, args=((i,)))
+            t.daemon = True
+            threads.append(t)
     [x.start() for x in threads]  # pylint: disable=W0106
     [x.join() for x in threads]  # pylint: disable=W0106
 
@@ -212,22 +214,34 @@ def _run_tests(params, test_files, output_dir):
 
     return test_results
 
+
 def collect_all_reports(test_file, parent_dir):
     """
     Directory contains directories which are numbers that indicate the amount of
     workers.
     """
-    
-    files = list(map(Path, subprocess.check_output(["find", parent_dir, "-type", "f", "-name", "output.xml"], encoding='utf8').strip().splitlines()))
-    name = test_file.name.replace('.robot', '')
-    with open(parent_dir / 'output.txt', 'w') as stdout:
+
+    files = list(
+        map(
+            Path,
+            subprocess.check_output(
+                ["find", parent_dir, "-type", "f", "-name", "output.xml"],
+                encoding="utf8",
+            )
+            .strip()
+            .splitlines(),
+        )
+    )
+    name = test_file.name.replace(".robot", "")
+    with open(parent_dir / "output.txt", "w") as stdout:
         os.chdir(parent_dir)
         rebot(*files, name=name, log=None, stdout=stdout)
         report_html = Path("/opt/robot/report.html")
         if report_html.exists():
             shutil.move("/opt/robot/report.html", parent_dir)
 
-def run_tests(params, test_files, token, results_file):
+
+def run_tests(params, test_files, token, results_file, debug):
     """
     Call this with json request with following data:
     - params: dict passed to robottest.sh
@@ -242,7 +256,7 @@ def run_tests(params, test_files, token, results_file):
     token_dir = output_dir / token
     _clean_dir(token_dir)
     src_dir = Path("/opt/src")
-    params['TOKEN'] = token
+    params["TOKEN"] = token
 
     test_results = []
     test_results += _run_tests(
@@ -251,12 +265,13 @@ def run_tests(params, test_files, token, results_file):
         token_dir,
     )
 
-    results_file = output_dir / (results_file or 'results.json')
+    results_file = output_dir / (results_file or "results.json")
     results_file.write_text(json.dumps(test_results))
     logger.info(f"Created output file at {results_file}")
 
 
 def smoketestselenium():
+
     from selenium import webdriver
     from selenium.webdriver import FirefoxOptions
 
@@ -265,11 +280,11 @@ def smoketestselenium():
     try:
         browser = webdriver.Firefox(options=opts)
     except:
-        log = Path('geckodriver.log')
+        log = Path("geckodriver.log")
         if log.exists():
             raise Exception(log.read_text())
-
-    # browser.get("http://example.com")
+    else:
+        browser.close()
 
 
 def _clean_dir(path):
@@ -279,13 +294,19 @@ def _clean_dir(path):
         else:
             file.unlink()
 
+
 if __name__ == "__main__":
+
     archive = Path("/tmp/archive")
     archive = base64.b64decode(archive.read_bytes())
-    data = json.loads(archive)
+    params = json.loads(archive)
     del archive
 
-    smoketestselenium()
+    os.environ["ROBOT_REMOTE_DEBUGGING"] = "1" if params.get("debug") else "0"
+    if params.get("headless"):
+        # if not headless - user sees everything - then this nerves
+        os.environ["MOZ_HEADLESS"] = "1"
+        smoketestselenium()
 
-    run_tests(**data)
+    run_tests(**params)
     logger.info("Finished calling robotest.py")

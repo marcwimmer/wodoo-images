@@ -123,7 +123,7 @@ RUN /bin/bash /usr/local/bin/check_sha.sh "$CUSTOMS_SHA"
 # used at a customer to fix proxy; can destroy public keys so no update works
 ADD etc/apt/apt.conf.d/99fixbadproxy /etc/apt/apt.conf.d/99fixbadproxy
 
-ENV LANG C.UTF-8
+ENV LANG=C.UTF-8
 RUN apt update
 RUN apt-get install \
 	-y \
