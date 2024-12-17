@@ -188,5 +188,4 @@ RUN chmod a+x entrypoint*.sh
 ENTRYPOINT ["/opt/robot/entrypoint.sh"]
 ADD openbox/welcome.txt /etc/welcome.txt
 
-RUN apt install -y conky
 ADD conky.txt /opt/robot/.conkyrc
