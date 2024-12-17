@@ -1,7 +1,6 @@
 # pylint: disable=import-outside-toplevel
 import base64
 from copy import deepcopy
-import robot
 import shutil
 import os
 import arrow
@@ -13,8 +12,6 @@ import logging
 import threading
 from tabulate import tabulate
 from robot import rebot
-import argparse
-
 
 
 FORMAT = "[%(levelname)s] %(name) -12s %(asctime)s %(message)s"
@@ -40,7 +37,6 @@ def safe_filename(name):
     return name
 
 
-
 def safe_avg(values):
     if not values:
         return 0
@@ -56,14 +52,14 @@ def _run_test(
     dbname,
     user,
     password,
-    browser="firefox",
+    browser,
     selenium_timeout=20,
     parallel=1,
     tags=None,
     odoo_version=None,
     **run_parameters,
 ):
-    assert browser in Browsers
+    assert browser in Browsers, f"Invalid browser {browser} - not in {Browsers.keys()}"
     browser = Browsers[browser]
 
     if password is True:
@@ -146,10 +142,10 @@ def _run_test(
         results[index]["ok"] = success
         results[index]["duration"] = (arrow.utcnow() - started).total_seconds()
 
-    logger.info("Preparing threads")
     if parallel == 1:
         run_robot(0)
     else:
+        logger.info("Preparing threads")
         for i in range(parallel):
             t = threading.Thread(target=run_robot, args=((i,)))
             t.daemon = True
@@ -217,22 +213,34 @@ def _run_tests(params, test_files, output_dir):
 
     return test_results
 
+
 def collect_all_reports(test_file, parent_dir):
     """
     Directory contains directories which are numbers that indicate the amount of
     workers.
     """
-    
-    files = list(map(Path, subprocess.check_output(["find", parent_dir, "-type", "f", "-name", "output.xml"], encoding='utf8').strip().splitlines()))
-    name = test_file.name.replace('.robot', '')
-    with open(parent_dir / 'output.txt', 'w') as stdout:
+
+    files = list(
+        map(
+            Path,
+            subprocess.check_output(
+                ["find", parent_dir, "-type", "f", "-name", "output.xml"],
+                encoding="utf8",
+            )
+            .strip()
+            .splitlines(),
+        )
+    )
+    name = test_file.name.replace(".robot", "")
+    with open(parent_dir / "output.txt", "w") as stdout:
         os.chdir(parent_dir)
         rebot(*files, name=name, log=None, stdout=stdout)
         report_html = Path("/opt/robot/report.html")
         if report_html.exists():
             shutil.move("/opt/robot/report.html", parent_dir)
 
-def run_tests(params, test_files, token, results_file):
+
+def run_tests(params, test_files, token, results_file, debug):
     """
     Call this with json request with following data:
     - params: dict passed to robottest.sh
@@ -247,7 +255,7 @@ def run_tests(params, test_files, token, results_file):
     token_dir = output_dir / token
     _clean_dir(token_dir)
     src_dir = Path("/opt/src")
-    params['TOKEN'] = token
+    params["TOKEN"] = token
 
     test_results = []
     test_results += _run_tests(
@@ -256,7 +264,7 @@ def run_tests(params, test_files, token, results_file):
         token_dir,
     )
 
-    results_file = output_dir / (results_file or 'results.json')
+    results_file = output_dir / (results_file or "results.json")
     results_file.write_text(json.dumps(test_results))
     logger.info(f"Created output file at {results_file}")
 
@@ -271,7 +279,7 @@ def smoketestselenium():
     try:
         browser = webdriver.Firefox(options=opts)
     except:
-        log = Path('geckodriver.log')
+        log = Path("geckodriver.log")
         if log.exists():
             raise Exception(log.read_text())
     else:
@@ -285,23 +293,19 @@ def _clean_dir(path):
         else:
             file.unlink()
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Running the robotests")
-    parser.add_argument("--headless", action="store_true", help="Starts browser in headless mode")
-    parser.add_argument("--debug", action="store_true", help="Wait for debugger to connect on 5678")
-    args = parser.parse_args()
 
-    os.environ['ROBOT_REMOTE_DEBUGGING'] = "1" if args.debug else "0"
+if __name__ == "__main__":
 
     archive = Path("/tmp/archive")
     archive = base64.b64decode(archive.read_bytes())
-    data = json.loads(archive)
+    params = json.loads(archive)
     del archive
 
-    if args.headless:
+    os.environ["ROBOT_REMOTE_DEBUGGING"] = "1" if params.get("debug") else "0"
+    if params.get("headless"):
         # if not headless - user sees everything - then this nerves
-        os.environ['MOZ_HEADLESS'] = '1'
+        os.environ["MOZ_HEADLESS"] = "1"
         smoketestselenium()
 
-    run_tests(**data)
+    run_tests(**params)
     logger.info("Finished calling robotest.py")
