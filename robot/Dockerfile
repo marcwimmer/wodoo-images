@@ -180,7 +180,7 @@ ADD openbox/menu.xml  /opt/robot/.config/openbox/menu.xml
 RUN touch /opt/robot/.hushlogin
 COPY robotest.py ./
 COPY entrypoint.sh ./
-COPY entrypoint_standalone.sh ./
+COPY entrypoint_cobot.sh ./
 RUN chmod a+x entrypoint*.sh
 ENTRYPOINT ["/opt/robot/entrypoint.sh"]
 ADD openbox/welcome.txt /etc/welcome.txt

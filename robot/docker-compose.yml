@@ -71,10 +71,9 @@ services:
           # required by vscode
           - SYS_ADMIN
         shm_size: 4gb
-        entrypoint: ["/opt/robot/entrypoint_standalone.sh"]
+        entrypoint: ["/opt/robot/entrypoint_cobot.sh"]
         privileged: true
         environment:
-            IS_COBOT_CONTAINER: 1
             DISPLAY: :0
             OUTPUT_DIR: /opt/output
             OWNER_UID: ${OWNER_UID}

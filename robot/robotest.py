@@ -13,6 +13,8 @@ import logging
 import threading
 from tabulate import tabulate
 from robot import rebot
+import argparse
+
 
 
 FORMAT = "[%(levelname)s] %(name) -12s %(asctime)s %(message)s"
@@ -260,12 +262,12 @@ def run_tests(params, test_files, token, results_file):
 
 
 def smoketestselenium():
+
     from selenium import webdriver
     from selenium.webdriver import FirefoxOptions
 
     opts = FirefoxOptions()
-    # TODO
-    # opts.add_argument("--headless")
+    opts.add_argument("--headless")
     try:
         browser = webdriver.Firefox(options=opts)
     except:
@@ -284,17 +286,21 @@ def _clean_dir(path):
             file.unlink()
 
 if __name__ == "__main__":
-    # TODO harcoded
-    os.environ['DISPLAY'] = ":0"
-    # TODO
-    os.environ['IS_COBOT_CONTAINER'] = "1"
-    os.environ['ROBOT_REMOTE_DEBUGGING'] = "1"
+    parser = argparse.ArgumentParser(description="Running the robotests")
+    parser.add_argument("--headless", action="store_true", help="Starts browser in headless mode")
+    parser.add_argument("--debug", action="store_true", help="Wait for debugger to connect on 5678")
+    args = parser.parse_args()
+
+    os.environ['ROBOT_REMOTE_DEBUGGING'] = "1" if args.debug else "0"
+
     archive = Path("/tmp/archive")
     archive = base64.b64decode(archive.read_bytes())
     data = json.loads(archive)
     del archive
 
-    smoketestselenium()
+    if args.headless:
+        # if not headless - user sees everything - then this nerves
+        smoketestselenium()
 
     run_tests(**data)
     logger.info("Finished calling robotest.py")

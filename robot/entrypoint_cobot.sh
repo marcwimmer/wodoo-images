@@ -73,6 +73,8 @@ export CUSTOMS_DIR=$CUSTOMS_DIR
 EOL
 
 echo "alias odoo=\"$USER_HOME/.local/bin/odoo --project-name=$project_name\"" >> "$USER_HOME/.bashrc"
+echo "export DISPLAY=$DISPLAY" >> "$USER_HOME/.bashrc"
+echo "export IS_COBOT_CONTAINER=1" >> "$USER_HOME/.bashrc"
 echo 'eval "$(_ODOO_COMPLETE=bash_source odoo)"' >> "$USER_HOME/.bashrc"
 
 chmod a+x "$USER_HOME/.bashrc"
