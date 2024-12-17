@@ -286,7 +286,9 @@ def _clean_dir(path):
 if __name__ == "__main__":
     # TODO harcoded
     os.environ['DISPLAY'] = ":0"
+    # TODO
     os.environ['IS_COBOT_CONTAINER'] = "1"
+    os.environ['ROBOT_REMOTE_DEBUGGING'] = "1"
     archive = Path("/tmp/archive")
     archive = base64.b64decode(archive.read_bytes())
     data = json.loads(archive)

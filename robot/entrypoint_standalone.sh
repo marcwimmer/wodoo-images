@@ -81,7 +81,13 @@ chown $USERNAME "$USER_HOME/.bashrc"
 # Step 8: Configure Openbox Startup
 DISPLAY="$DISPLAY" gosu $USERNAME openbox &
 
-mkdir /opt/robot/.vscode
+# Step 9: Visual Studio Code Permissions
+mkdir -p /opt/robot/.vscode
 sudo chown robot /opt/robot/.config /opt/robot/.vscode -R
 
+# Step 10: TCP port debugpy to socket
+# [[ -e "$DEBUG_SOCKET" ]] && rm "$DEBUG_SOCKET"
+# socat UNIX-LISTEN:${DEBUG_SOCKET},fork TCP:localhost:5678 &
+
+# loop forever
 sleep infinity

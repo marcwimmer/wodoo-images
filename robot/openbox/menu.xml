@@ -6,12 +6,22 @@
     <menu id="root-menu" label="Openbox Menu">
         <item label="Terminal">
             <action name="Execute">
-                <command>xterm -e "cd $CUSTOMS_DIR; echo 'To run a test use: ';bash"</command>
+                <command>xterm -e "cat /etc/welcome.txt; cd $CUSTOMS_DIR; bash"</command>
             </action>
         </item>
         <item label="Web Browser">
             <action name="Execute">
                 <command>firefox</command>
+            </action>
+        </item>
+        <item label="VSCode">
+            <action name="Execute">
+                <command>code "$CUSTOMS_DIR"</command>
+            </action>
+        </item>
+        <item label="Install Wodoo Editable">
+            <action name="Execute">
+                <command>pipx install -e /home/parallels/projects/wodoo --force</command>
             </action>
         </item>
         <separator />

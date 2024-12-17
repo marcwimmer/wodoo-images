@@ -88,8 +88,6 @@ services:
             - manual
         extra_hosts:
             - "host.docker.internal:host-gateway"
-        ports:
-            - 5678:5678
         volumes:
             - ${HOST_RUN_DIR}/robot/cobot/debug:/tmp/debug_socket/
             - ${HOST_RUN_DIR}/odoo_outdir/robot_output:/opt/output

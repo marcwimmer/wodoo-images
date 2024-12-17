@@ -1,0 +1,10 @@
+To run a test use:
+
+odoo robot run<enter>   --> choose dialog appears
+odoo robot run<tab><tab>
+odoo robot run purchase<tab>
+
+To reset db:
+
+odoo -f db reset
+odoo update
