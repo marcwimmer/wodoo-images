@@ -16,7 +16,7 @@
         </item>
         <item label="VSCode">
             <action name="Execute">
-                <command>code "$CUSTOMS_DIR"</command>
+                <command>sh -c 'code "$CUSTOMS_DIR"'</command>
             </action>
         </item>
         <item label="Install Wodoo Editable">
