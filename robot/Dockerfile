@@ -89,7 +89,7 @@ RUN \
 	firefox-esr xvfb x11-utils x11-xserver-utils mesa-utils libgl1-mesa-dri \
 	fonts-dejavu-core fonts-dejavu-core fonts-liberation \ 
 	libpci3 curl pipx gosu openbox ca-certificates curl gnupg lsb-release \
-	ssh
+	ssh conky
 
 RUN mkdir -p /opt/robot/.ssh && \
 chmod 500 /opt/robot/.ssh  && \
@@ -184,3 +184,6 @@ COPY entrypoint_cobot.sh ./
 RUN chmod a+x entrypoint*.sh
 ENTRYPOINT ["/opt/robot/entrypoint.sh"]
 ADD openbox/welcome.txt /etc/welcome.txt
+
+RUN apt install -y conky
+ADD conky.txt /opt/robot/.conkyrc

@@ -22,11 +22,11 @@ logger = logging.getLogger("")  # root handler
 Browsers = {
     "chrome": {
         "driver": "Chrome",
-        "alias": "headlesschrome",
+        "alias": "chrome",
     },
     "firefox": {
         "driver": "Firefox",
-        "alias": "headlessfirefox",
+        "alias": "firefox",
     },
 }
 
@@ -75,6 +75,7 @@ def _run_test(
         "ODOO_DB": dbname,
         "ODOO_VERSION": odoo_version,
         "BROWSER": browser["alias"],
+        "BROWSER_HEADLESS": run_parameters['headless'],
         "ALIAS": browser["alias"],
         "DRIVER": browser["driver"],
     }
