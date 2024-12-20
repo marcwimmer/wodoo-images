@@ -1,4 +1,6 @@
 # pylint: disable=import-outside-toplevel
+import uuid
+import selenium
 import base64
 from copy import deepcopy
 import shutil
@@ -11,7 +13,7 @@ import threading
 import logging
 import threading
 from tabulate import tabulate
-from robot import rebot
+from robot import rebot, run
 
 
 FORMAT = "[%(levelname)s] %(name) -12s %(asctime)s %(message)s"
@@ -75,7 +77,7 @@ def _run_test(
         "ODOO_DB": dbname,
         "ODOO_VERSION": odoo_version,
         "BROWSER": browser["alias"],
-        "BROWSER_HEADLESS": '1' if run_parameters['headless'] else '0',
+        "BROWSER_HEADLESS": "1" if run_parameters["headless"] else "0",
         "ALIAS": browser["alias"],
         "DRIVER": browser["driver"],
     }
@@ -271,20 +273,32 @@ def run_tests(params, test_files, token, results_file, debug):
 
 
 def smoketestselenium():
+    # Robot Framework code as a string
+    robot_code = """
+*** Settings ***
+Library    BuiltIn
+Library    SeleniumLibrary
+Library    ./addons_robot/robot_utils/library/browser.py
 
-    from selenium import webdriver
-    from selenium.webdriver import FirefoxOptions
+*** Test Cases ***
+Smoke Test Robot
+    Log    Hello, World!
+    ${driver}=  Get Driver For Browser  firefox  ${CURDIR}${/}..${/}tests/download    headless=${FALSE}
+    Open Browser  https:/www.mut.de  firefox
+    Go To       https://www.heise.de
+    """
 
-    opts = FirefoxOptions()
-    opts.add_argument("--headless")
+    # Create a temporary file
+    temp_file = Path(f"{uuid.uuid4()}.robot")
     try:
-        browser = webdriver.Firefox(options=opts)
+        temp_file.write_text(robot_code)
+        os.environ['BROWSER_WIDTH'] = "800"
+        os.environ['BROWSER_HEIGHT'] = "600"
+        result = run(temp_file)
+        if result:
+            raise Exception("Smoke test not passed.")
     except:
-        log = Path("geckodriver.log")
-        if log.exists():
-            raise Exception(log.read_text())
-    else:
-        browser.close()
+        temp_file.unlink()
 
 
 def _clean_dir(path):
@@ -296,17 +310,16 @@ def _clean_dir(path):
 
 
 if __name__ == "__main__":
-
     archive = Path("/tmp/archive")
     archive = base64.b64decode(archive.read_bytes())
     params = json.loads(archive)
     del archive
 
     os.environ["ROBOT_REMOTE_DEBUGGING"] = "1" if params.get("debug") else "0"
-    if params.get("headless"):
-        # if not headless - user sees everything - then this nerves
-        os.environ["MOZ_HEADLESS"] = "1"
-        smoketestselenium()
+    # if params.get("headless"):
+    # if not headless - user sees everything - then this nerves
+    # os.environ["MOZ_HEADLESS"] = "1"
+    smoketestselenium()
 
     run_tests(**params)
     logger.info("Finished calling robotest.py")
