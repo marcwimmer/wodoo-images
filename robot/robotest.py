@@ -70,8 +70,6 @@ def _run_test(
     variables = {
         "SELENIUM_DELAY": 0,
         "SELENIUM_TIMEOUT": selenium_timeout,
-        "ODOO_URL": url,
-        "ODOO_URL_LOGIN": url + "/web/login",
         "ODOO_USER": user,
         "ODOO_PASSWORD": password,
         "ODOO_DB": dbname,
