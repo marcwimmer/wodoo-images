@@ -50,38 +50,13 @@ def safe_avg(values):
 def _run_test(
     test_file,
     output_dir,
-    url,
-    dbname,
-    user,
-    password,
     browser,
-    selenium_timeout=20,
     parallel=1,
     tags=None,
-    odoo_version=None,
     **run_parameters,
 ):
     assert browser in Browsers, f"Invalid browser {browser} - not in {Browsers.keys()}"
     browser = Browsers[browser]
-
-    if password is True:
-        password = "1"  # handle limitation of settings files
-
-    variables = {
-        "SELENIUM_DELAY": 0,
-        "SELENIUM_TIMEOUT": selenium_timeout,
-        "ODOO_USER": user,
-        "ODOO_PASSWORD": password,
-        "ODOO_DB": dbname,
-        "ODOO_VERSION": odoo_version,
-        "BROWSER": browser["alias"],
-        "BROWSER_HEADLESS": "1" if run_parameters["headless"] else "0",
-        "ALIAS": browser["alias"],
-        "DRIVER": browser["driver"],
-    }
-    for k, v in run_parameters.items():
-        variables[k] = v
-    logger.info("Configuration:\n%s", variables)
 
     results = [
         {
@@ -93,10 +68,8 @@ def _run_test(
     threads = []
 
     def run_robot(index):
-        effective_variables = deepcopy(variables)
+        effective_variables = {}
         effective_variables["TEST_RUN_INDEX"] = index
-        effective_variables["CURRENT_TEST"] = f"{safe_filename(test_file.stem)}_{index}"
-        effective_variables["TEST_DIR"] = str(test_file.parent)
 
         started = arrow.utcnow()
         effective_output_dir = output_dir / str(index)
