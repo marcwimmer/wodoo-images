@@ -115,10 +115,6 @@ services:
             # TODO
             - /home/parallels/projects/wodoo:/home/parallels/projects/wodoo
 
-
-
-
-
     robot_file_browser:
         build: $ODOO_IMAGES/static_file_browser
         restart: unless-stopped
