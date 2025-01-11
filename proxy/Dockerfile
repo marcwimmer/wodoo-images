@@ -2,5 +2,6 @@ FROM openresty/openresty:alpine
 COPY nginx.conf /usr/local/openresty/nginx/conf/nginx.conf
 
 EXPOSE 80
+COPY run.sh /run.sh
 
-CMD ["/usr/local/openresty/bin/openresty", "-g", "daemon off;"]
+CMD ["/bin/sh", "/run.sh"]
