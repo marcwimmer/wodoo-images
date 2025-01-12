@@ -5,6 +5,10 @@ local backup = "http://127.0.0.1:8080"
 local varname = "target_robotfilebrowser"
 ngx.var[varname] = backup
 
+if os.getenv("RUN_ROBOT") ~= "1" then
+    return
+end
+
 -- Resolve the hostname dynamically
 local r, err = resolver:new({
     nameservers = {"127.0.0.11"}, -- Docker's DNS resolver

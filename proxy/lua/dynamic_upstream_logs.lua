@@ -1,11 +1,11 @@
 local resolver = require "resty.dns.resolver"
-local hostname = "roundcube"
-local port = "80"
+local hostname = "logs"
+local port = "6688"
 local backup = "http://127.0.0.1:8080"
-local varname = "target_mailer"
+local varname = "target_logs"
 ngx.var[varname] = backup
 
-if os.getenv("RUN_MAIL") ~= "1" then
+if os.getenv("DEVMODE") ~= "1" then
     return
 end
 
