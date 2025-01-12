@@ -3,9 +3,6 @@ services:
   proxy_abstract:
     build: $ODOO_IMAGES/proxy
     restart: unless-stopped
-    #ports:
-    #   - "9228:9228"
-    # - "9995:80"
     profiles:
       - auto
     networks:
@@ -20,6 +17,7 @@ services:
       - ${CUSTOMS_DIR}:/usr/src/app/odoo
       - ${HOST_RUN_DIR}/odoo_outdir/robot_output:/robot_output
       - ${HOST_RUN_DIR}/proxy_logs:/root/.npm/_logs
+      - ${ODOO_IMAGES}/proxy/lua/myngx.lua:/usr/local/openresty/luajit/share/lua/5.1/myngx.lua
 
     logging:
       driver: "json-file"

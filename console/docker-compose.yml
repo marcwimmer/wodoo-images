@@ -14,8 +14,8 @@ services:
         - webssh
         - proxy
     restart: "unless-stopped"
-    profiles:
-      - manual
+    # profiles:
+    #   - manual
     environment:
       - PROJECT_NAME=${PROJECT_NAME}
     volumes:
